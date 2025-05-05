@@ -51,7 +51,7 @@ export const actions: Actions = {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: provider,
       options: {
-        redirectTo: new URL('/auth/callback/', getURL()).toString()
+        redirectTo: new URL('/auth/callback', getURL()).toString()
       }
     });
     if (error) {
