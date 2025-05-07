@@ -1,16 +1,23 @@
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 export const GET = async ({ url, locals: { supabase } }) => {
   const code = url.searchParams.get('code') as string;
+  const errorCode = url.searchParams.get('error_code') as string;
 
-  if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
-      throw redirect(303, '/private');
-    } else {
-      console.error(error);
-    }
+  if (errorCode) {
+    error(400, { message: errorCode });
   }
 
-  throw redirect(303, '/auth');
+  if (!code) {
+    error(400);
+  }
+
+  const { error: apiError } = await supabase.auth.exchangeCodeForSession(code);
+
+  if (apiError) {
+    console.error(apiError);
+    error(400, apiError);
+  }
+
+  redirect(303, '/private');
 };

@@ -7,6 +7,10 @@
   let password = $state('');
 </script>
 
+<svelte:head>
+  <title>Auth</title>
+</svelte:head>
+
 <div class="space-y-2">
   <p class="text-2xl font-bold">ログイン</p>
   <div>

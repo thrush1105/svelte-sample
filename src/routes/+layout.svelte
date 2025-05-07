@@ -24,6 +24,6 @@
   </div>
 </header>
 
-<div class="mx-auto max-w-xl p-4">
+<main class="mx-auto max-w-xl space-y-4 p-4">
   {@render children()}
-</div>
+</main>

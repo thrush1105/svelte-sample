@@ -3,6 +3,10 @@
   let { session, user } = $derived(data);
 </script>
 
+<svelte:head>
+  <title>Private</title>
+</svelte:head>
+
 <div class="space-y-2">
   <p class="text-2xl font-bold">セッション</p>
   {#if user}
