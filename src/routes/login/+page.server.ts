@@ -1,17 +1,26 @@
+import type { Provider } from '@supabase/supabase-js';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import type { Provider } from '@supabase/supabase-js';
+
+const getVercelUrl = () => {
+  const env = process?.env?.VERCEL_ENV;
+  if (env === 'production') {
+    return process?.env.VERCEL_PROJECT_PRODUCTION_URL;
+  } else if (env === 'preview') {
+    return process?.env.VERCEL_BRANCH_URL;
+  } else {
+    return process?.env?.VERCEL_URL;
+  }
+};
 
 const getRedirectUrl = () => {
-  let url =
-    process?.env?.NEXT_PUBLIC_SITE_URL ?? // Set this to your site URL in production env.
-    process?.env?.NEXT_PUBLIC_VERCEL_URL ?? // Automatically set by Vercel.
-    process?.env?.VERCEL_URL ??
-    'http://localhost:5173/';
+  let url = getVercelUrl() ?? 'http://localhost:3000/';
+
   // Make sure to include `https://` when not localhost.
   url = url.startsWith('http') ? url : `https://${url}`;
   // Make sure to include a trailing `/`.
   url = url.endsWith('/') ? url : `${url}/`;
+
   return new URL('/login/callback', url).toString();
 };
 
