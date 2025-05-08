@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { type Handle, redirect } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
 
 const supabase: Handle = async ({ event, resolve }) => {
   /**
@@ -67,24 +67,11 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.session = session;
   event.locals.user = user;
 
-  if (!event.locals.session && event.url.pathname.startsWith('/private')) {
-    redirect(303, '/auth');
+  if (!event.locals.session && event.url.pathname.startsWith('/dashboard')) {
+    redirect(303, '/login');
   }
 
   return resolve(event);
 };
 
-const log: Handle = async ({ event, resolve }) => {
-  console.log(
-    new Date().toLocaleString(),
-    event.getClientAddress(),
-    event.request.method,
-    event.url.pathname,
-    event.url.search,
-    event.locals.user?.id
-  );
-
-  return resolve(event);
-};
-
-export const handle: Handle = sequence(supabase, authGuard, log);
+export const handle: Handle = sequence(supabase, authGuard);

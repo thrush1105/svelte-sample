@@ -1,27 +1,37 @@
 <script lang="ts">
+  import { invalidate } from '$app/navigation';
+  import { onMount } from 'svelte';
   import '../app.css';
 
   let { data, children } = $props();
-  let { session } = $derived(data);
+  let { supabase, session, user } = $derived(data);
+
+  onMount(() => {
+    const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
+      if (newSession?.expires_at !== session?.expires_at) {
+        invalidate('supabase:auth');
+      }
+    });
+
+    return () => data.subscription.unsubscribe();
+  });
 </script>
 
-<header class="bg-slate-100">
-  <div class="mx-auto max-w-xl p-4">
-    <div class="flex justify-between">
-      <div class="flex gap-4">
-        <a href="/">Home</a>
-        <a href="/auth">Auth</a>
-        <a href="/private">Private</a>
-      </div>
-      <div class="flex gap-4">
-        {#if session}
-          <form action="/auth?/logout" method="POST">
-            <button class="block hover:cursor-pointer">Logout</button>
-          </form>
-        {/if}
-      </div>
+<header>
+  <nav class="flex justify-between bg-muted p-4">
+    <div>
+      <a href="/" class="hover:">Home</a>
     </div>
-  </div>
+    <div>
+      {#if user}
+        <form action="/login?/logout" method="POST">
+          <button class="hover:cursor-pointer">ログアウト</button>
+        </form>
+      {:else}
+        <a href="/login">ログイン</a>
+      {/if}
+    </div>
+  </nav>
 </header>
 
 <main class="mx-auto max-w-xl space-y-4 p-4">
