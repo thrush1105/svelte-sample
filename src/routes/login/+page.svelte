@@ -1,10 +1,11 @@
 <script lang="ts">
+  import InputPassword from '$lib/components/input-password.svelte';
+  import { Button } from '$lib/components/ui/button/index.js';
   import { Input } from '$lib/components/ui/input/index.js';
   import { Label } from '$lib/components/ui/label/index.js';
-  import { Button } from '$lib/components/ui/button/index.js';
-  import type { PageProps } from './$types';
-  import { Github } from '@lucide/svelte';
   import Separator from '$lib/components/ui/separator/separator.svelte';
+  import { Github } from '@lucide/svelte';
+  import type { PageProps } from './$types';
 
   let { form }: PageProps = $props();
 
@@ -28,13 +29,7 @@
     </div>
     <div>
       <Label>パスワード</Label>
-      <Input
-        bind:value={password}
-        type="password"
-        name="password"
-        placeholder="パスワード"
-        required
-      />
+      <InputPassword bind:value={password} name="password" placeholder="パスワード" />
     </div>
     <Button type="submit" class="w-full">ログイン</Button>
   </div>
