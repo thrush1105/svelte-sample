@@ -82,7 +82,11 @@
           <Label for="difficulty-hard" class="hover:cursor-pointer">難しい</Label>
         </div>
         <div class="flex items-center space-x-2">
-          <RadioGroup.Item value="とても難しい" id="difficulty-very-hard" class="hover:cursor-pointer" />
+          <RadioGroup.Item
+            value="とても難しい"
+            id="difficulty-very-hard"
+            class="hover:cursor-pointer"
+          />
           <Label for="difficulty-very-hard" class="hover:cursor-pointer">とても難しい</Label>
         </div>
       </div>

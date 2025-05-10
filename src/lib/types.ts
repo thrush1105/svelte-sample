@@ -14,4 +14,5 @@ export type Quiz = {
   correct_choice_id: string | null;
   answer_choice_id?: string | null;
   is_correct?: boolean | null;
+  is_favorite?: boolean;
 };

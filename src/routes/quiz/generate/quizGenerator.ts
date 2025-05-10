@@ -89,7 +89,8 @@ export const generateQuizzesWithAI = async (model: string, userInputText: string
                   },
                   correct_choice_id: {
                     type: 'string',
-                    description: 'The identifier for the correct choice.'
+                    description: 'The identifier for the correct choice.',
+                    enum: ['A', 'B', 'C', 'D']
                   }
                 },
                 required: [

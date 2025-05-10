@@ -5,35 +5,23 @@
   import { Plus } from '@lucide/svelte';
 
   let { data } = $props();
-  let { supabase, quizzes } = $derived(data);
+  let { quizzes } = $derived(data);
 
   let numberOfAnswered = $state(0);
   let numberOfCorrectAnswers = $state(0);
 
-  const onAnswered = async (id: string, answerChoiceId: string, isCorrect: boolean) => {
+  const onAnswered = async (isCorrect: boolean) => {
     numberOfAnswered++;
     if (isCorrect) numberOfCorrectAnswers++;
-
-    /**
-     * 回答をSupabaseのquizzesテーブルに更新する
-     */
-    const { error: apiError } = await supabase
-      .from('quizzes')
-      .update({ answer_choice_id: answerChoiceId, is_correct: isCorrect, updated_at: new Date() })
-      .eq('id', id);
-
-    if (apiError) {
-      console.error(apiError);
-    }
   };
 </script>
 
 <svelte:head>
-  <title>クイズ一覧</title>
+  <title>クイズ</title>
 </svelte:head>
 
 <div class="flex items-center justify-end">
-  <Button variant="default" href="/quiz/generate">
+  <Button variant="outline" href="/quiz/generate">
     <Plus />
     クイズを生成する
   </Button>
@@ -44,8 +32,7 @@
     <FourChoiceQuiz
       {quiz}
       number={index + 1}
-      onAnswered={(answerChoiceId: string, isCorrect: boolean) =>
-        onAnswered(quiz.id, answerChoiceId, isCorrect)}
+      onAnswered={(answerChoiceId: string, isCorrect: boolean) => onAnswered(isCorrect)}
     />
   {/each}
 
