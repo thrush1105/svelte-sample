@@ -1,12 +1,17 @@
 <script lang="ts">
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-  import { LayoutDashboard } from '@lucide/svelte';
+  import { LayoutDashboard, MessageCircleQuestion } from '@lucide/svelte';
 
   const items = [
     {
       title: 'ダッシュボード',
       url: '/dashboard',
       icon: LayoutDashboard
+    },
+    {
+      title: 'クイズ',
+      url: '/quiz',
+      icon: MessageCircleQuestion
     }
   ];
 </script>
