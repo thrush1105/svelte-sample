@@ -1,5 +1,5 @@
 <script lang="ts">
-  import InputPassword from '$lib/components/input-password.svelte';
+  import PasswordInput from '$lib/components/password-input.svelte';
   import { Button } from '$lib/components/ui/button/index.js';
   import { Input } from '$lib/components/ui/input/index.js';
   import { Label } from '$lib/components/ui/label/index.js';
@@ -29,7 +29,7 @@
     </div>
     <div>
       <Label>パスワード</Label>
-      <InputPassword bind:value={password} name="password" placeholder="パスワード" />
+      <PasswordInput bind:value={password} name="password" placeholder="パスワード" />
     </div>
     <Button type="submit" class="w-full">ログイン</Button>
   </div>

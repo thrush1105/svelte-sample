@@ -1,5 +1,5 @@
 <script lang="ts">
-  import InputPassword from '$lib/components/input-password.svelte';
+  import PasswordInput from '$lib/components/password-input.svelte';
   import { Button } from '$lib/components/ui/button/index.js';
   import { Label } from '$lib/components/ui/label/index.js';
   import type { PageProps } from './$types';
@@ -23,7 +23,7 @@
   <div class="space-y-4">
     <div>
       <Label>現在のパスワード</Label>
-      <InputPassword
+      <PasswordInput
         bind:value={currentPassword}
         name="currentPassword"
         placeholder="現在のパスワード"
@@ -31,11 +31,11 @@
     </div>
     <div>
       <Label>新しいパスワード</Label>
-      <InputPassword bind:value={newPassword} name="newPassword" placeholder="新しいパスワード" />
+      <PasswordInput bind:value={newPassword} name="newPassword" placeholder="新しいパスワード" />
     </div>
     <div>
       <Label>新しいパスワード（確認）</Label>
-      <InputPassword
+      <PasswordInput
         bind:value={confirmNewPassword}
         name="confirmNewPassword"
         placeholder="新しいパスワード（確認）"
