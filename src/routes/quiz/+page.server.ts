@@ -1,24 +1,35 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { countQuizzes, fetchQuizzes } from '../quiz';
 
-export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
+export const load: PageServerLoad = async ({ url }) => {
   const groupId = url.searchParams.get('groupId');
+  const page = parseInt(url.searchParams.get('page') ?? '1') ?? 1;
+  const perPage = parseInt(url.searchParams.get('perPage') ?? '5') ?? 5;
+  const from = perPage * (page - 1);
+  const to = from + perPage - 1;
 
-  let query = supabase.from('quizzes').select('*').order('created_at', { ascending: true });
+  const { error: errorOnCount, count: total } = await countQuizzes(groupId);
 
-  if (groupId) {
-    query = query.eq('group_id', groupId);
+  if (errorOnCount) {
+    console.error(errorOnCount);
+    error(500, errorOnCount.message);
   }
 
-  const { data: quizzes, error: apiError } = await query;
+  const { data: quizzes, error: errorOnFetch } = await fetchQuizzes(groupId, from, to);
 
-  if (apiError) {
-    console.error(apiError);
-    error(500, apiError.message);
+  if (errorOnFetch) {
+    console.error(errorOnFetch);
+    error(500, errorOnFetch.message);
   }
 
   return {
     groupId: groupId,
+    page: page,
+    perPage: perPage,
+    from: from,
+    to: to,
+    total: total ?? 0,
     quizzes: quizzes ?? []
   };
 };

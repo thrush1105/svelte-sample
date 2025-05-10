@@ -4,14 +4,17 @@
   import { cn } from '$lib/utils';
   import { Heart } from '@lucide/svelte';
   import Button from './ui/button/button.svelte';
+  import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 
   type Props = {
     quiz: Quiz;
     number: number;
+    isLoading?: boolean;
+    isFavorite?: boolean;
     onAnswered?: (answerChoiceId: string, isCorrect: boolean) => void;
   };
 
-  let { quiz, number, onAnswered }: Props = $props();
+  let { quiz, number, isLoading = false, isFavorite, onAnswered }: Props = $props();
 
   let correctChoiceText = $derived.by(() => {
     if (
@@ -30,7 +33,6 @@
   let answerChoiceId = $state('');
   let isAnswered = $derived(answerChoiceId.trim().length > 0);
   let isCorrect = $state(false);
-  let isFavorite = $state(quiz.is_favorite);
 
   /**
    * クイズに回答する
@@ -48,13 +50,12 @@
 
     const { error } = await supabase
       .from('quizzes')
-      .update({ is_favorite: !isFavorite, updated_at: new Date() })
+      .update({ is_favorite: isFavorite, updated_at: new Date() })
       .eq('id', quiz.id);
 
     if (error) {
       console.error(error);
       isFavorite = !isFavorite;
-      return;
     }
   };
 </script>
@@ -65,35 +66,43 @@
     <button
       class={cn(
         'rounded-full p-1.5 opacity-80 duration-300',
-        isFavorite ? 'hover:bg-red-100' : 'hover:hover:bg-muted'
+        !isLoading && isFavorite ? 'hover:bg-red-100' : 'hover:hover:bg-muted'
       )}
       onclick={addToFavorite}
     >
       <Heart
         size={20}
-        color={isFavorite ? '#fb2c36' : '#000000'}
-        fill={isFavorite ? '#fb2c36' : '#00000000'}
+        color={!isLoading && isFavorite ? '#fb2c36' : '#000000'}
+        fill={!isLoading && isFavorite ? '#fb2c36' : '#00000000'}
       />
     </button>
   </div>
-  <p>{quiz.question}</p>
-  <div class="grid space-y-2 px-2">
-    {#if quiz.choices}
-      {#each Object.entries(quiz.choices) as [choiceId, choiceText]}
-        <Button
-          variant="outline"
-          class={cn(
-            isAnswered && choiceId === quiz.correct_choice_id ? 'bg-green-200' : '',
-            isAnswered && choiceId === answerChoiceId && !isCorrect ? 'bg-red-200' : ''
-          )}
-          disabled={isAnswered}
-          onclick={() => answerQuiz(choiceId)}
-        >
-          {choiceText}
-        </Button>
-      {/each}
-    {/if}
-  </div>
+  {#if isLoading}
+    <Skeleton class="h-8 w-full" />
+    <Skeleton class="h-8 w-full" />
+    <Skeleton class="h-8 w-full" />
+    <Skeleton class="h-8 w-full" />
+    <Skeleton class="h-8 w-full" />
+  {:else}
+    <p>{quiz.question}</p>
+    <div class="grid space-y-2 px-2">
+      {#if quiz.choices}
+        {#each Object.entries(quiz.choices) as [choiceId, choiceText]}
+          <Button
+            variant="outline"
+            class={cn(
+              isAnswered && choiceId === quiz.correct_choice_id ? 'bg-green-200' : '',
+              isAnswered && choiceId === answerChoiceId && !isCorrect ? 'bg-red-200' : ''
+            )}
+            disabled={isAnswered}
+            onclick={() => answerQuiz(choiceId)}
+          >
+            {choiceText}
+          </Button>
+        {/each}
+      {/if}
+    </div>
+  {/if}
 
   {#if isAnswered}
     {#if isCorrect}
