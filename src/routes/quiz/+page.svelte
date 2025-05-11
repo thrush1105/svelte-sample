@@ -3,9 +3,12 @@
   import AppPagination from '$lib/components/app-pagination.svelte';
   import FourChoiceQuiz from '$lib/components/four-choice-quiz.svelte';
   import Button, { buttonVariants } from '$lib/components/ui/button/button.svelte';
+  import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
+  import Label from '$lib/components/ui/label/label.svelte';
   import * as Select from '$lib/components/ui/select/index.js';
   import { cn } from '$lib/utils.js';
   import { Plus } from '@lucide/svelte';
+
   let { data } = $props();
   let { total } = $derived(data);
 
@@ -17,6 +20,7 @@
   let numberOfAnswered = $state(0);
   let numberOfCorrectAnswers = $state(0);
   let isLoading = $state(false);
+  let favorite = $state(false);
 
   const onAnswered = async (isCorrect: boolean) => {
     numberOfAnswered++;
@@ -52,13 +56,32 @@
       isLoading = false;
     });
   };
+
+  const onFilterFavorite = async (value: boolean) => {
+    const url = new URL(window.location.href);
+    if (value) {
+      url.searchParams.set('filter', 'favorite');
+      url.searchParams.delete('page');
+    } else {
+      url.searchParams.delete('filter');
+      url.searchParams.delete('page');
+    }
+
+    isLoading = true;
+
+    goto(url, { keepFocus: true, noScroll: true }).finally(() => {
+      isLoading = false;
+    });
+  };
 </script>
 
 <svelte:head>
   <title>クイズ</title>
 </svelte:head>
 
-<div class="flex items-center justify-between">
+{@render showFavorite()}
+
+<div class="flex items-center gap-4">
   {@render perPageSelect()}
   {@render generateQuizzesButton()}
 </div>
@@ -74,6 +97,13 @@
 {#if total > perPage}
   <AppPagination count={total} bind:page {perPage} onPageChange={changePage} />
 {/if}
+
+{#snippet showFavorite()}
+  <div class="flex items-center gap-2">
+    <Checkbox bind:checked={favorite} id="check-favorite" onCheckedChange={onFilterFavorite} />
+    <Label for="check-favorite" class="hover:cursor-pointer">お気に入り</Label>
+  </div>
+{/snippet}
 
 {#snippet generateQuizzesButton()}
   <Button variant="outline" href="/quiz/generate">
