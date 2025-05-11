@@ -12,6 +12,7 @@
 </svelte:head>
 
 <p class="text-2xl font-bold">ダッシュボード</p>
+
 {#if user}
   <div>
     <Label>ID</Label>

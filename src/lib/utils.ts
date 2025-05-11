@@ -6,3 +6,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const MINIMUM_PASSWORD_LENGTH = 6;
+
+export class AppError extends Error {
+  constructor(e?: string) {
+    super(e);
+    this.name = new.target.name;
+  }
+}

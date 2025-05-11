@@ -12,11 +12,11 @@ export const GET = async ({ url, locals: { supabase } }) => {
     }
   }
 
-  const { error: authError } = await supabase.auth.exchangeCodeForSession(code);
+  const { error: errorOnExchangeCode } = await supabase.auth.exchangeCodeForSession(code);
 
-  if (authError) {
-    console.error(authError);
-    error(400, authError);
+  if (errorOnExchangeCode) {
+    console.error(errorOnExchangeCode);
+    error(400, errorOnExchangeCode);
   }
 
   redirect(303, '/dashboard');
