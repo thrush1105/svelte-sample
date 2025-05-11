@@ -1,9 +1,13 @@
 <script lang="ts">
-  import { invalidate } from '$app/navigation';
+  import { afterNavigate, beforeNavigate, invalidate } from '$app/navigation';
   import AppSidebar from '$lib/components/app-sidebar.svelte';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+  import NProgress from 'nprogress';
+  import 'nprogress/nprogress.css';
   import { onMount } from 'svelte';
   import '../app.css';
+
+  NProgress.configure({ showSpinner: false });
 
   let { data, children } = $props();
   let { supabase, session, user } = $derived(data);
@@ -17,6 +21,14 @@
 
     return () => data.subscription.unsubscribe();
   });
+
+  beforeNavigate(({ from, to }) => {
+    NProgress.start();
+	});
+
+  afterNavigate(({ from, to }) => {
+    NProgress.done();
+	});
 </script>
 
 <Sidebar.Provider>
