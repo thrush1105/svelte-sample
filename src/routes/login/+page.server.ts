@@ -15,12 +15,10 @@ const getVercelUrl = () => {
 
 const getRedirectUrl = () => {
   let url = getVercelUrl() ?? 'http://localhost:3000/';
-
   // Make sure to include `https://` when not localhost.
   url = url.startsWith('http') ? url : `https://${url}`;
   // Make sure to include a trailing `/`.
   url = url.endsWith('/') ? url : `${url}/`;
-
   return new URL('/login/callback', url).toString();
 };
 
@@ -35,14 +33,22 @@ export const actions: Actions = {
     if (error) {
       console.error(error);
       return fail(400, { email, error: { message: error.message } });
-    } else {
-      redirect(303, '/dashboard');
     }
+
+    redirect(303, '/dashboard');
   },
+
   logout: async ({ locals: { supabase } }) => {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error(error);
+      return fail(400, { error: { message: error.message } });
+    }
+
     redirect(303, '/login');
   },
+
   loginWithOAuth: async ({ request, locals: { supabase } }) => {
     const formData = await request.formData();
     const provider = formData.get('provider') as Provider;
@@ -55,8 +61,8 @@ export const actions: Actions = {
     if (error) {
       console.error(error);
       return fail(400, { error: { message: error.message } });
-    } else {
-      redirect(303, data.url);
     }
+
+    redirect(303, data.url);
   }
 };

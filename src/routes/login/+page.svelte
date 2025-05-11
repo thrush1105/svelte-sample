@@ -18,9 +18,11 @@
 </svelte:head>
 
 <p class="text-2xl font-bold">ログイン</p>
+
 {#if form?.error}
   <p class="text-destructive">{form.error.message}</p>
 {/if}
+
 <form method="POST" action="?/login">
   <div class="space-y-4">
     <div>

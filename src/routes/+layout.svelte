@@ -24,25 +24,29 @@
     <AppSidebar />
   {/if}
   <div class="w-full">
-    <div class="flex items-center justify-between bg-muted p-4">
-      <div class="flex items-center gap-4">
-        {#if user}
-          <Sidebar.Trigger class="flex-none" />
-        {/if}
-        <a href="/" class="shrink">App</a>
-      </div>
-      <div class="flex items-center gap-4">
-        {#if user}
-          <form action="/login?/logout" method="POST">
-            <button class="hover:cursor-pointer">ログアウト</button>
-          </form>
-        {:else}
-          <a href="/login" class="flex justify-end">ログイン</a>
-        {/if}
-      </div>
-    </div>
+    {@render header()}
     <div class="mx-auto max-w-3xl space-y-4 p-4">
       {@render children()}
     </div>
   </div>
 </Sidebar.Provider>
+
+{#snippet header()}
+  <div class="flex items-center justify-between bg-muted p-4">
+    <div class="flex items-center gap-4">
+      {#if user}
+        <Sidebar.Trigger class="flex-none" />
+      {/if}
+      <a href="/" class="shrink">App</a>
+    </div>
+    <div class="flex items-center gap-4">
+      {#if user}
+        <form action="/login?/logout" method="POST">
+          <button class="hover:cursor-pointer">ログアウト</button>
+        </form>
+      {:else}
+        <a href="/login" class="flex justify-end">ログイン</a>
+      {/if}
+    </div>
+  </div>
+{/snippet}
