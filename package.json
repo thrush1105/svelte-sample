@@ -18,6 +18,7 @@
     "@sveltejs/adapter-auto": "^4.0.0",
     "@sveltejs/kit": "^2.16.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "@types/nprogress": "^0.2.3",
     "autoprefixer": "^10.4.20",
     "bits-ui": "^1.4.7",
     "clsx": "^2.1.1",
@@ -37,6 +38,7 @@
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",
     "openai": "^4.98.0",
-    "zod": "^3.24.4"
+    "zod": "^3.24.4",
+    "nprogress": "^0.2.0"
   }
 }
