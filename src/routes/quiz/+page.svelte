@@ -6,16 +6,14 @@
   import * as Select from '$lib/components/ui/select/index.js';
   import { cn } from '$lib/utils.js';
   import { Plus } from '@lucide/svelte';
-  import { fetchQuizzes } from '../quiz.js';
   let { data } = $props();
-  let { groupId, total } = $derived(data);
+  let { total } = $derived(data);
 
   let { quizzes } = $derived(data);
   let page = $state(data.page);
   let perPage = $state(data.perPage);
   let perPageString = $state(String(data.perPage));
   let from = $state(data.from);
-  let to = $state(data.to);
   let numberOfAnswered = $state(0);
   let numberOfCorrectAnswers = $state(0);
   let isLoading = $state(false);
@@ -43,7 +41,6 @@
     perPage = parseInt(value) ?? 5;
     page = Math.floor(from / perPage) + 1;
     from = perPage * (page - 1);
-    to = from + perPage - 1;
 
     const url = new URL(window.location.href);
     url.searchParams.set('page', String(page));
@@ -66,23 +63,13 @@
   {@render generateQuizzesButton()}
 </div>
 
-<div class="space-y-4">
-  {#each quizzes as quiz, index}
-    <FourChoiceQuiz
-      {quiz}
-      number={index + 1}
-      {isLoading}
-      isFavorite={quiz.is_favorite}
-      onAnswered={(answerChoiceId: string, isCorrect: boolean) => onAnswered(isCorrect)}
-    />
-  {/each}
+{@render quizzesContent()}
 
-  {#if quizzes.length === 0}
-    {@render noResult()}
-  {:else if numberOfAnswered === quizzes.length}
-    {@render quizResult()}
-  {/if}
-</div>
+{#if quizzes.length === 0}
+  {@render noResult()}
+{:else if numberOfAnswered === quizzes.length}
+  {@render quizResult()}
+{/if}
 
 {#if total > perPage}
   <AppPagination count={total} bind:page {perPage} onPageChange={changePage} />
@@ -106,6 +93,19 @@
       <Select.Item value="100">100 問/ページ</Select.Item>
     </Select.Content>
   </Select.Root>
+{/snippet}
+
+{#snippet quizzesContent()}
+  <div class="space-y-4">
+    {#each quizzes as quiz, index}
+      <FourChoiceQuiz
+        {quiz}
+        number={index + 1}
+        {isLoading}
+        onAnswered={(answerChoiceId: string, isCorrect: boolean) => onAnswered(isCorrect)}
+      />
+    {/each}
+  </div>
 {/snippet}
 
 {#snippet quizResult()}

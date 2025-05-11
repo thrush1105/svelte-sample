@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
-import type { Quiz } from '../../../lib/types';
+import type { Quiz } from '$lib/types';
 import type { Actions } from './$types';
 import { generateQuizzesWithAI } from './quizGenerator';
 
@@ -15,7 +15,8 @@ export const actions: Actions = {
     let userInputText = genre
       ? `ジャンル「${genre}」で難易度「${difficulty}」の4択クイズを5問出題してください。`
       : `難易度「${difficulty}」の4択クイズを5問出題してください。`;
-    const response = await generateQuizzesWithAI('gpt-4.1-nano', userInputText).catch((error) => {
+
+      const response = await generateQuizzesWithAI('gpt-4.1-nano', userInputText).catch((error) => {
       console.error(error);
     });
 

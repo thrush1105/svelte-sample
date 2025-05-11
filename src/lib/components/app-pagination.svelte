@@ -1,5 +1,6 @@
 <script lang="ts">
   import * as Pagination from '$lib/components/ui/pagination/index.js';
+  import { ChevronLeft, ChevronRight } from '@lucide/svelte';
 
   let { count, page = $bindable(), perPage, onPageChange } = $props();
 </script>
@@ -8,7 +9,9 @@
   {#snippet children({ pages, currentPage })}
     <Pagination.Content>
       <Pagination.Item>
-        <Pagination.PrevButton />
+        <Pagination.PrevButton>
+          <ChevronLeft />
+        </Pagination.PrevButton>
       </Pagination.Item>
       {#each pages as page (page.key)}
         {#if page.type === 'ellipsis'}
@@ -24,7 +27,9 @@
         {/if}
       {/each}
       <Pagination.Item>
-        <Pagination.NextButton />
+        <Pagination.NextButton>
+          <ChevronRight />
+        </Pagination.NextButton>
       </Pagination.Item>
     </Pagination.Content>
   {/snippet}

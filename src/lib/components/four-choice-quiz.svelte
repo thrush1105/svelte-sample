@@ -10,11 +10,10 @@
     quiz: Quiz;
     number: number;
     isLoading?: boolean;
-    isFavorite?: boolean;
     onAnswered?: (answerChoiceId: string, isCorrect: boolean) => void;
   };
 
-  let { quiz, number, isLoading = false, isFavorite, onAnswered }: Props = $props();
+  let { quiz, number, isLoading = false, onAnswered }: Props = $props();
 
   let correctChoiceText = $derived.by(() => {
     if (
@@ -32,7 +31,12 @@
 
   let answerChoiceId = $state('');
   let isAnswered = $derived(answerChoiceId.trim().length > 0);
-  let isCorrect = $state(false);
+  let isCorrect = $derived(answerChoiceId === quiz.correct_choice_id);
+  let isFavorite = $derived(quiz.is_favorite);
+
+  $effect(() => {
+    answerChoiceId = '';
+  });
 
   /**
    * クイズに回答する
@@ -40,8 +44,6 @@
    */
   const answerQuiz = (choiceId: string) => {
     answerChoiceId = choiceId;
-    isCorrect = choiceId === quiz.correct_choice_id;
-
     onAnswered?.(answerChoiceId, isCorrect);
   };
 
@@ -62,55 +64,88 @@
 
 <div class="space-y-2">
   <div class="flex items-center justify-between">
-    <p class="text-2xl font-bold">Q.{number}</p>
-    <button
-      class={cn(
-        'rounded-full p-1.5 opacity-80 duration-300',
-        !isLoading && isFavorite ? 'hover:bg-red-100' : 'hover:hover:bg-muted'
-      )}
-      onclick={addToFavorite}
-    >
-      <Heart
-        size={20}
-        color={!isLoading && isFavorite ? '#fb2c36' : '#000000'}
-        fill={!isLoading && isFavorite ? '#fb2c36' : '#00000000'}
-      />
-    </button>
+    {@render questionNumber()}
+    {@render heartButton()}
   </div>
+
   {#if isLoading}
-    <Skeleton class="h-8 w-full" />
-    <Skeleton class="h-8 w-full" />
-    <Skeleton class="h-8 w-full" />
-    <Skeleton class="h-8 w-full" />
-    <Skeleton class="h-8 w-full" />
+    {@render loadingUI()}
   {:else}
-    <p>{quiz.question}</p>
-    <div class="grid space-y-2 px-2">
-      {#if quiz.choices}
-        {#each Object.entries(quiz.choices) as [choiceId, choiceText]}
-          <Button
-            variant="outline"
-            class={cn(
-              isAnswered && choiceId === quiz.correct_choice_id ? 'bg-green-200' : '',
-              isAnswered && choiceId === answerChoiceId && !isCorrect ? 'bg-red-200' : ''
-            )}
-            disabled={isAnswered}
-            onclick={() => answerQuiz(choiceId)}
-          >
-            {choiceText}
-          </Button>
-        {/each}
-      {/if}
-    </div>
+    {@render question()}
+    {@render choiceButton()}
   {/if}
 
   {#if isAnswered}
-    {#if isCorrect}
-      <p class="text-lg font-bold text-green-600">正解！</p>
-    {:else}
-      <p class="text-lg font-bold text-red-600">不正解...</p>
-    {/if}
-    <p>A: <span class="text-lg font-bold">{correctChoiceText}</span></p>
-    <p>{quiz.explanation}</p>
+    {@render answerResult()}
+    {@render correctAnswer()}
+    {@render explanation()}
   {/if}
 </div>
+
+{#snippet questionNumber()}
+  <p class="text-2xl font-bold">Q.{number}</p>
+{/snippet}
+
+{#snippet heartButton()}
+  <button
+    class={cn(
+      'rounded-full p-1.5 opacity-80 duration-300',
+      !isLoading && isFavorite ? 'hover:bg-red-100' : 'hover:hover:bg-muted'
+    )}
+    onclick={addToFavorite}
+  >
+    <Heart
+      size={20}
+      color={!isLoading && isFavorite ? '#fb2c36' : '#000000'}
+      fill={!isLoading && isFavorite ? '#fb2c36' : '#00000000'}
+    />
+  </button>
+{/snippet}
+
+{#snippet loadingUI()}
+  <Skeleton class="h-8 w-full" />
+  <Skeleton class="h-8 w-full" />
+  <Skeleton class="h-8 w-full" />
+  <Skeleton class="h-8 w-full" />
+  <Skeleton class="h-8 w-full" />
+{/snippet}
+
+{#snippet question()}
+  <p>{quiz.question}</p>
+{/snippet}
+
+{#snippet choiceButton()}
+  <div class="grid space-y-2 px-2">
+    {#if quiz.choices}
+      {#each Object.entries(quiz.choices) as [choiceId, choiceText]}
+        <Button
+          variant="outline"
+          class={cn(
+            isAnswered && choiceId === quiz.correct_choice_id ? 'bg-green-200' : '',
+            isAnswered && choiceId === answerChoiceId && !isCorrect ? 'bg-red-200' : ''
+          )}
+          disabled={isAnswered}
+          onclick={() => answerQuiz(choiceId)}
+        >
+          {choiceText}
+        </Button>
+      {/each}
+    {/if}
+  </div>
+{/snippet}
+
+{#snippet answerResult()}
+  {#if isCorrect}
+    <p class="text-lg font-bold text-green-600">正解！</p>
+  {:else}
+    <p class="text-lg font-bold text-red-600">不正解...</p>
+  {/if}
+{/snippet}
+
+{#snippet correctAnswer()}
+  <p>A: <span class="text-lg font-bold">{correctChoiceText}</span></p>
+{/snippet}
+
+{#snippet explanation()}
+  <p>{quiz.explanation}</p>
+{/snippet}
