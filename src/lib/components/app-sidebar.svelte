@@ -2,6 +2,10 @@
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import { LayoutDashboard, MessageCircleQuestion } from '@lucide/svelte';
 
+  import { useSidebar } from '$lib/components/ui/sidebar/index.js';
+
+  const sidebar = useSidebar();
+
   const items = [
     {
       title: 'ダッシュボード',
@@ -24,7 +28,11 @@
         <Sidebar.Menu>
           {#each items as item (item.title)}
             <Sidebar.MenuItem>
-              <Sidebar.MenuButton>
+              <Sidebar.MenuButton
+                onclick={() => {
+                  sidebar.setOpenMobile(false);
+                }}
+              >
                 {#snippet child({ props })}
                   <a href={item.url} {...props}>
                     <item.icon />
