@@ -1,23 +1,22 @@
 import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
 import { countQuizzes, fetchQuizzes } from '../quiz';
+import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url }) => {
-  const groupId = url.searchParams.get('groupId');
-  const page = parseInt(url.searchParams.get('page') ?? '1') ?? 1;
-  const perPage = parseInt(url.searchParams.get('perPage') ?? '5') ?? 5;
-  const filter = url.searchParams.get('filter');
+  const params = url.searchParams;
+  const page = parseInt(params.get('page') ?? '1') || 1;
+  const perPage = parseInt(params.get('perPage') ?? '5') || 5;
   const from = perPage * (page - 1);
   const to = from + perPage - 1;
 
-  const { error: errorOnCount, count: total } = await countQuizzes(groupId, filter);
+  const { error: errorOnCount, count: total } = await countQuizzes(url.searchParams);
 
   if (errorOnCount) {
     console.error(errorOnCount);
     error(500, errorOnCount.message);
   }
 
-  const { data: quizzes, error: errorOnFetch } = await fetchQuizzes(groupId, filter, from, to);
+  const { data: quizzes, error: errorOnFetch } = await fetchQuizzes(url.searchParams);
 
   if (errorOnFetch) {
     console.error(errorOnFetch);
@@ -25,7 +24,6 @@ export const load: PageServerLoad = async ({ url }) => {
   }
 
   return {
-    groupId: groupId,
     page: page,
     perPage: perPage,
     from: from,
