@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ url }) => {
   const from = perPage * (page - 1);
   const to = from + perPage - 1;
 
-  const { error: errorOnCount, count: total } = await countQuizzes(url.searchParams);
+  const { count: total, error: errorOnCount } = await countQuizzes(url.searchParams);
 
   if (errorOnCount) {
     console.error(errorOnCount);

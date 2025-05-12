@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
+  import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/state';
   import AppPagination from '$lib/components/app-pagination.svelte';
   import FourChoiceQuiz from '$lib/components/four-choice-quiz.svelte';
@@ -8,14 +8,12 @@
   import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
   import Label from '$lib/components/ui/label/label.svelte';
   import * as Select from '$lib/components/ui/select/index.js';
-  import { cn } from '$lib/utils.js';
+  import { changeUrlQuery, cn } from '$lib/utils.js';
   import { Plus } from '@lucide/svelte';
   import { onMount } from 'svelte';
 
   let { data } = $props();
-  let { total } = $derived(data);
-
-  let { quizzes } = $derived(data);
+  let { total, quizzes } = $derived(data);
   let pageNumber = $state(data.page);
   let perPage = $state(data.perPage);
   let perPageString = $state(String(data.perPage));
@@ -45,46 +43,32 @@
     if (isCorrect) numberOfCorrectAnswers++;
   };
 
-  const changeQuery = (
-    params: Record<string, string | number | boolean | null>,
-    opts?: { noScroll: boolean }
-  ) => {
-    const url = new URL(page.url.href);
-    for (const key in params) {
-      if (params[key] === null) {
-        url.searchParams.delete(key);
-      } else {
-        let value = params[key];
-        if (typeof value === 'number' || typeof value === 'boolean') value = String(value);
-        url.searchParams.set(key, value);
-      }
-    }
-    goto(url, { ...{ keepFocus: true, noScroll: true }, ...opts });
-  };
-
-  const changePage = (value: number) => {
-    pageNumber = value;
+  const changePage = () => {
     from = perPage * (pageNumber - 1);
-
-    changeQuery({ page: pageNumber }, { noScroll: false });
+    changeUrlQuery({ page: pageNumber }, { noScroll: false });
   };
 
-  const changePerPage = (value: string) => {
-    perPage = parseInt(value) ?? 5;
+  const changePerPage = () => {
+    perPage = parseInt(perPageString) || 5;
     pageNumber = Math.floor(from / perPage) + 1;
     from = perPage * (pageNumber - 1);
-
-    changeQuery({ page: pageNumber, perPage: perPage });
+    changeUrlQuery({ page: pageNumber, perPage: perPage });
   };
 
   const filterFavorite = () => {
-    if (favorite) changeQuery({ favorite: favorite, page: null });
-    else changeQuery({ favorite: null, page: null });
+    pageNumber = 1;
+    changeUrlQuery({
+      favorite: favorite ? favorite : null,
+      page: null
+    });
   };
 
   const searchText = () => {
-    if (text) changeQuery({ text: text, page: null });
-    else changeQuery({ text: null, page: null });
+    pageNumber = 1;
+    changeUrlQuery({
+      text: !!text ? text : null,
+      page: null
+    });
   };
 </script>
 
@@ -92,7 +76,7 @@
   <title>クイズ</title>
 </svelte:head>
 
-{@render showFavorite()}
+{@render favoriteCheckbox()}
 
 {@render searchInput()}
 
@@ -113,7 +97,7 @@
   <AppPagination count={total} bind:page={pageNumber} {perPage} onPageChange={changePage} />
 {/if}
 
-{#snippet showFavorite()}
+{#snippet favoriteCheckbox()}
   <div class="flex items-center gap-2">
     <Checkbox bind:checked={favorite} id="check-favorite" onCheckedChange={filterFavorite} />
     <Label for="check-favorite" class="hover:cursor-pointer">お気に入り</Label>
