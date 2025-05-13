@@ -1,6 +1,5 @@
 <script lang="ts">
   import { afterNavigate, beforeNavigate } from '$app/navigation';
-  import { page } from '$app/state';
   import AppPagination from '$lib/components/app-pagination.svelte';
   import FourChoiceQuiz from '$lib/components/four-choice-quiz.svelte';
   import SearchInput from '$lib/components/search-input.svelte';
@@ -10,25 +9,18 @@
   import * as Select from '$lib/components/ui/select/index.js';
   import { changeUrlQuery, cn } from '$lib/utils.js';
   import { Plus } from '@lucide/svelte';
-  import { onMount } from 'svelte';
 
   let { data } = $props();
   let { total, quizzes } = $derived(data);
-  let pageNumber = $state(data.page);
-  let perPage = $state(data.perPage);
-  let perPageString = $state(String(data.perPage));
+  let pageNumber = $state(data.params.page);
+  let perPage = $state(data.params.perPage);
+  let perPageString = $state(String(data.params.perPage));
   let from = $state(data.from);
   let numberOfAnswered = $state(0);
   let numberOfCorrectAnswers = $state(0);
   let isLoading = $state(false);
-  let favorite = $state(false);
-  let text = $state('');
-
-  onMount(() => {
-    const params = page.url.searchParams;
-    favorite = (params.get('favorite') ?? '') === 'true';
-    text = params.get('text') ?? '';
-  });
+  let favorite = $state(data.params.favorite);
+  let text = $state(data.params.text);
 
   beforeNavigate(() => {
     isLoading = true;
@@ -52,13 +44,16 @@
     perPage = parseInt(perPageString) || 5;
     pageNumber = Math.floor(from / perPage) + 1;
     from = perPage * (pageNumber - 1);
-    changeUrlQuery({ page: pageNumber, perPage: perPage });
+    changeUrlQuery({
+      page: pageNumber,
+      perPage: perPage
+    });
   };
 
   const filterFavorite = () => {
     pageNumber = 1;
     changeUrlQuery({
-      favorite: favorite ? favorite : null,
+      favorite: favorite || null,
       page: null
     });
   };
@@ -66,7 +61,7 @@
   const searchText = () => {
     pageNumber = 1;
     changeUrlQuery({
-      text: !!text ? text : null,
+      text: text || null,
       page: null
     });
   };

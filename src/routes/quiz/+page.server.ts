@@ -1,4 +1,3 @@
-import { error } from '@sveltejs/kit';
 import { countQuizzes, fetchQuizzes } from '../quiz';
 import type { PageServerLoad } from './$types';
 
@@ -9,23 +8,17 @@ export const load: PageServerLoad = async ({ url }) => {
   const from = perPage * (page - 1);
   const to = from + perPage - 1;
 
-  const { count: total, error: errorOnCount } = await countQuizzes(url.searchParams);
+  const { count: total } = await countQuizzes(url.searchParams);
 
-  if (errorOnCount) {
-    console.error(errorOnCount);
-    error(500, errorOnCount.message);
-  }
-
-  const { data: quizzes, error: errorOnFetch } = await fetchQuizzes(url.searchParams);
-
-  if (errorOnFetch) {
-    console.error(errorOnFetch);
-    error(500, errorOnFetch.message);
-  }
+  const { data: quizzes } = await fetchQuizzes(url.searchParams);
 
   return {
-    page: page,
-    perPage: perPage,
+    params: {
+      page,
+      perPage,
+      favorite: (params.get('favorite') ?? '') === 'true',
+      text: params.get('text') ?? ''
+    },
     from: from,
     to: to,
     total: total ?? 0,

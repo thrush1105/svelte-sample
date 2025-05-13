@@ -1,7 +1,7 @@
 import { supabase } from '$lib/supabaseClient';
 import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 
-const filter = (params: URLSearchParams, query: PostgrestFilterBuilder<any, any, any>) => {
+const filterQuery = (params: URLSearchParams, query: PostgrestFilterBuilder<any, any, any>) => {
   const groupId = params.get('groupId');
   const favorite = params.get('favorite');
   const text = params.get('text');
@@ -24,9 +24,9 @@ const filter = (params: URLSearchParams, query: PostgrestFilterBuilder<any, any,
 export const countQuizzes = async (params: URLSearchParams) => {
   let query = supabase.from('quizzes').select('*', { count: 'exact', head: true });
 
-  query = filter(params, query);
+  query = filterQuery(params, query);
 
-  return await query;
+  return await query.throwOnError();
 };
 
 export const fetchQuizzes = async (params: URLSearchParams) => {
@@ -43,7 +43,7 @@ export const fetchQuizzes = async (params: URLSearchParams) => {
     .order('created_at', { ascending: false })
     .order('id', { ascending: true });
 
-  query = filter(params, query);
+  query = filterQuery(params, query);
 
-  return await query;
+  return await query.throwOnError();
 };
