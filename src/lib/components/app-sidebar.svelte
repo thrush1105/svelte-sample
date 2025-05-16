@@ -11,6 +11,11 @@
       title: 'ダッシュボード',
       url: '/dashboard',
       icon: LayoutDashboard
+    },
+    {
+      title: '給与明細',
+      url: '/payslip',
+      icon: LayoutDashboard
     }
   ];
 </script>

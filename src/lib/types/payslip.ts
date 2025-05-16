@@ -1,0 +1,51 @@
+export type PayslipRow = {
+  id: number;
+  created_at: string;
+  user_id: string;
+  payment_date: string;
+  type: string;
+  basic_salary: number;
+  area_allowance: number;
+  comutation_allowance: number;
+  overtime_allowance: number;
+  incentive: number;
+  total_earnings: number;
+  health_insurance: number;
+  long_term_care_insurance: number;
+  employees_pension: number;
+  employment_insurance: number;
+  income_tax: number;
+  resident_tax: number;
+  year_end_adjustment: number;
+  total_deductions: number;
+  net_pay: number;
+  flat_amount_cut: number;
+};
+
+export type Payslip = {
+  date: string;
+  type: string;
+  earnings: {
+    items: { label: string; value: number }[];
+    total: { label: string; value: number };
+  };
+  deductions: {
+    items: { label: string; value: number }[];
+    total: { label: string; value: number };
+  };
+  netPay: {
+    items: { label: string; value: number }[];
+  };
+};
+
+export type YearlyPayslip = {
+  year: number;
+  total_earnings: number;
+  health_insurance: number;
+  employees_pension: number;
+  employment_insurance: number;
+  income_tax: number;
+  resident_tax: number;
+  total_deductions: number;
+  net_pay: number;
+};
