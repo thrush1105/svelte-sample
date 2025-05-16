@@ -29,6 +29,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
           items: [
             { label: '基準給', value: p.basic_salary },
             { label: '地域手当', value: p.area_allowance },
+            { label: '通勤手当', value: p.commutation_allowance },
             { label: '割増給', value: p.overtime_allowance },
             { label: '奨励金', value: p.incentive }
           ],

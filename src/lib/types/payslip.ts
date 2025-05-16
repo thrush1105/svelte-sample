@@ -6,7 +6,7 @@ export type PayslipRow = {
   type: string;
   basic_salary: number;
   area_allowance: number;
-  comutation_allowance: number;
+  commutation_allowance: number;
   overtime_allowance: number;
   incentive: number;
   total_earnings: number;
