@@ -9,6 +9,8 @@
   <Table.Header>
     <Table.Row>
       <Table.Head>年</Table.Head>
+      <Table.Head>基本給</Table.Head>
+      <Table.Head>残業手当</Table.Head>
       <Table.Head>総支給額</Table.Head>
       <Table.Head>健康保険</Table.Head>
       <Table.Head>厚生年金</Table.Head>
@@ -23,6 +25,8 @@
     {#each items as p}
       <Table.Row>
         <Table.Cell>{p.year}</Table.Cell>
+        <Table.Cell>{p.basic_salary.toLocaleString()}</Table.Cell>
+        <Table.Cell>{p.overtime_allowance.toLocaleString()}</Table.Cell>
         <Table.Cell>{p.total_earnings.toLocaleString()}</Table.Cell>
         <Table.Cell>{p.health_insurance.toLocaleString()}</Table.Cell>
         <Table.Cell>{p.employees_pension.toLocaleString()}</Table.Cell>

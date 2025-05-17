@@ -41,6 +41,8 @@ export type Payslip = {
 
 export type YearlyPayslip = {
   year: number;
+  basic_salary: number;
+  overtime_allowance: number;
   total_earnings: number;
   health_insurance: number;
   employees_pension: number;
