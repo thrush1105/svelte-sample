@@ -1,11 +1,15 @@
 <script lang="ts">
   import Button from '$lib/components/ui/button/button.svelte';
-  import YearlyPayslip from '$lib/components/yearly-payslip.svelte';
+  import YearlyPayslip from '../yearly-payslip.svelte';
   import { Download } from '@lucide/svelte';
   import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
 </script>
+
+<svelte:head>
+  <title>給与明細 - 年別</title>
+</svelte:head>
 
 <YearlyPayslip items={data.payslipList} />
 

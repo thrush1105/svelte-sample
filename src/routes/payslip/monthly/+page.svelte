@@ -11,6 +11,10 @@
   });
 </script>
 
+<svelte:head>
+  <title>給与明細 - 月別</title>
+</svelte:head>
+
 <MonthSelect
   bind:value={params.month}
   onValueChange={() => {

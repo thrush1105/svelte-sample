@@ -4,4 +4,8 @@
   let { data }: PageProps = $props();
 </script>
 
+<svelte:head>
+  <title>給与明細を追加</title>
+</svelte:head>
+
 <PayslipForm {data} />

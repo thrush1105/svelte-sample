@@ -19,8 +19,6 @@
 
   const { form: formData, enhance } = form;
 
-  console.log($formData.id);
-
   /** 総支給額 */
   let totalEarnings = $derived(
     ($formData.basicSalary ?? 0) +
