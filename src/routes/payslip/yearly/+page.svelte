@@ -7,18 +7,25 @@
   let { data }: PageProps = $props();
 </script>
 
-<Button variant="link" href="/payslip">月別</Button>
-
-<YearlyPayslip items={data.yearlyPayslipList} />
+<YearlyPayslip items={data.payslipList} />
 
 {#if data.count > 0}
-  <Button variant="outline" href="/payslip/yearly/download?contentType=csv" target="_blank">
-    <Download />
-    CSVダウンロード
-  </Button>
-
-  <Button variant="outline" href="/payslip/yearly/download?contentType=json" target="_blank">
-    <Download />
-    JSONダウンロード
-  </Button>
+  <div class="flex gap-4">
+    {@render csvDownloadButton()}
+    {@render jsonDownloadButton()}
+  </div>
 {/if}
+
+{#snippet csvDownloadButton()}
+  <Button variant="outline" href={`/payslip/yearly/download?format=csv`} target="_blank">
+    <Download />
+    CSV
+  </Button>
+{/snippet}
+
+{#snippet jsonDownloadButton()}
+  <Button variant="outline" href={`/payslip/yearly/download?format=json`} target="_blank">
+    <Download />
+    JSON
+  </Button>
+{/snippet}

@@ -17,12 +17,13 @@ export type PayslipRow = {
   income_tax: number;
   resident_tax: number;
   year_end_adjustment: number;
+  flat_amount_cut: number;
   total_deductions: number;
   net_pay: number;
-  flat_amount_cut: number;
 };
 
 export type Payslip = {
+  id: number;
   date: string;
   type: string;
   earnings: {

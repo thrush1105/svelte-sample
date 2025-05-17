@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-  import { LayoutDashboard } from '@lucide/svelte';
+  import { FileText, LayoutDashboard } from '@lucide/svelte';
 
   import { useSidebar } from '$lib/components/ui/sidebar/index.js';
 
@@ -14,8 +14,8 @@
     },
     {
       title: '給与明細',
-      url: '/payslip',
-      icon: LayoutDashboard
+      url: '/payslip/monthly',
+      icon: FileText
     }
   ];
 </script>
