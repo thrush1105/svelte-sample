@@ -1,5 +1,5 @@
 import { convertKeysToSnake } from '$lib';
-import { fail, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { format, parse } from 'date-fns';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -21,7 +21,7 @@ export const actions: Actions = {
     }
 
     if (!user) {
-      return fail(401);
+      redirect(303, '/login');
     }
 
     const { error: errorOnUpdate } = await supabase.from('payslips').insert({
@@ -31,7 +31,7 @@ export const actions: Actions = {
 
     if (errorOnUpdate) {
       console.error(errorOnUpdate);
-      return fail(500);
+      error(500);
     }
 
     const month = format(parse(form.data.paymentDate, 'yyyy-MM-dd', new Date()), 'yyyy-MM');

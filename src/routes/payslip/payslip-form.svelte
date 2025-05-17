@@ -3,6 +3,7 @@
   import * as Form from '$lib/components/ui/form/index.js';
   import { Input } from '$lib/components/ui/input/index.js';
   import * as Select from '$lib/components/ui/select/index.js';
+  import { LoaderCircle } from '@lucide/svelte';
   import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
   import { formSchema, type FormSchema } from './schema';
@@ -17,7 +18,7 @@
     validators: zodClient(formSchema)
   });
 
-  const { form: formData, enhance } = form;
+  const { form: formData, enhance, submitting, delayed } = form;
 
   /** 総支給額 */
   let totalEarnings = $derived(
@@ -236,7 +237,12 @@
     </div>
   </div>
   <div class="flex gap-4">
-    <Form.Button>{$formData.id ? '更新' : '登録'}</Form.Button>
+    <Form.Button disabled={$submitting}>
+      {#if $delayed}
+        <LoaderCircle />
+      {/if}
+      {$formData.id ? '更新' : '登録'}
+    </Form.Button>
     <Button variant="secondary" onclick={() => history.back()}>キャンセル</Button>
   </div>
 </form>

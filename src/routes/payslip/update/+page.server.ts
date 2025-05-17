@@ -56,7 +56,7 @@ export const actions: Actions = {
     }
 
     if (!user) {
-      return fail(401);
+      redirect(303, '/login');
     }
 
     const { error: errorOnUpdate } = await supabase
@@ -68,7 +68,7 @@ export const actions: Actions = {
 
     if (errorOnUpdate) {
       console.error(errorOnUpdate);
-      return fail(500);
+      error(500);
     }
 
     const month = format(parse(form.data.paymentDate, 'yyyy-MM-dd', new Date()), 'yyyy-MM');
