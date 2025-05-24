@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-  import { LayoutDashboard } from '@lucide/svelte';
+  import { LayoutDashboard, Youtube } from '@lucide/svelte';
 
   import { useSidebar } from '$lib/components/ui/sidebar/index.js';
 
@@ -11,6 +11,11 @@
       title: 'ダッシュボード',
       url: '/dashboard',
       icon: LayoutDashboard
+    },
+    {
+      title: 'YouTube',
+      url: '/youtube',
+      icon: Youtube
     }
   ];
 </script>

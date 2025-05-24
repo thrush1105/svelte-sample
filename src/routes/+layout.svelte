@@ -24,11 +24,11 @@
 
   beforeNavigate(({ from, to }) => {
     NProgress.start();
-	});
+  });
 
   afterNavigate(({ from, to }) => {
     NProgress.done();
-	});
+  });
 </script>
 
 <Sidebar.Provider>
