@@ -34,9 +34,11 @@
   let errorMessage = $state('');
 
   const loadMore = async () => {
-    const { count } = await countVideos(data.supabase, search, data.user?.id);
+    if (pageNumber === 1) {
+      const { count } = await countVideos(data.supabase, search, data.user?.id);
 
-    maxPageNumber = Math.ceil((count ?? 0) / 20);
+      maxPageNumber = Math.ceil((count ?? 0) / 20);
+    }
 
     const { data: videos, error } = await fetchVideos(
       data.supabase,
