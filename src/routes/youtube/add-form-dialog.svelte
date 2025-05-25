@@ -10,9 +10,10 @@
   type Props = {
     open?: boolean;
     data: { form: SuperValidated<Infer<FormSchema>> };
+    onUpdated?: () => void;
   };
 
-  let { open = $bindable(false), data }: Props = $props();
+  let { open = $bindable(false), data, onUpdated }: Props = $props();
 </script>
 
 <Dialog.Root bind:open>
@@ -24,6 +25,12 @@
       <Dialog.Title>動画を追加する</Dialog.Title>
       <Dialog.Description>YouTubeのURLを入力してください。</Dialog.Description>
     </Dialog.Header>
-    <AddForm {data} onUpdated={() => (open = false)} />
+    <AddForm
+      {data}
+      onUpdated={() => {
+        open = false;
+        onUpdated?.();
+      }}
+    />
   </Dialog.Content>
 </Dialog.Root>

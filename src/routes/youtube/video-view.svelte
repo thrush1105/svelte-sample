@@ -57,12 +57,12 @@
 
 {#snippet menu()}
   <DropdownMenu.Root>
-    <DropdownMenu.Trigger class="h-fit rounded-full p-1 hover:bg-muted">
+    <DropdownMenu.Trigger class="h-fit rounded-full p-2 hover:bg-muted">
       <Ellipsis size={20} />
     </DropdownMenu.Trigger>
     <DropdownMenu.Content>
       <DropdownMenu.Group>
-        <DropdownMenu.Item onclick={handleDelete}>
+        <DropdownMenu.Item class="hover:cursor-pointer" onclick={handleDelete}>
           <Trash2 />
           削除
         </DropdownMenu.Item>

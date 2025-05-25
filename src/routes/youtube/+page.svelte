@@ -116,6 +116,8 @@
 
     const { error: errorOnDelete } = await deleteVideo(data.supabase, id);
 
+    items = items.filter((i) => i.id !== id);
+
     isLoading = false;
 
     if (errorOnDelete) {
@@ -132,19 +134,12 @@
 </svelte:head>
 
 <div class="space-y-4">
+  <SearchInput bind:value={search.q} onEnter={handleSearch} onReset={reload} />
+
   <div class="flex gap-4">
-    <AddFormDialog {data} />
+    <AddFormDialog {data} onUpdated={reload} />
     {@render sortMenu()}
   </div>
-
-  <SearchInput
-    bind:value={search.q}
-    onkeydown={(e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        handleSearch();
-      }
-    }}
-  />
 
   <InfiniteLoader {loaderState} triggerLoad={loadMore} loopMaxCalls={5}>
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -194,25 +189,19 @@
     </DropdownMenu.Trigger>
     <DropdownMenu.Content>
       <DropdownMenu.Group>
-        <DropdownMenu.Item onclick={() => handleSort('-created_at')}>
-          追加日が新しい順
-        </DropdownMenu.Item>
-        <DropdownMenu.Item onclick={() => handleSort('created_at')}>
-          追加日が古い順
-        </DropdownMenu.Item>
-        <DropdownMenu.Item onclick={() => handleSort('-published_at')}>
-          公開日が新しい順
-        </DropdownMenu.Item>
-        <DropdownMenu.Item onclick={() => handleSort('published_at')}>
-          公開日が古い順
-        </DropdownMenu.Item>
-        <DropdownMenu.Item onclick={() => handleSort('-view_count')}>
-          再生回数が多い順
-        </DropdownMenu.Item>
-        <DropdownMenu.Item onclick={() => handleSort('view_count')}>
-          再生回数が少ない順
-        </DropdownMenu.Item>
+        {@render menuItem('追加日が新しい順', '-created_at')}
+        {@render menuItem('追加日が古い順', 'created_at')}
+        {@render menuItem('公開日が新しい順', '-published_at')}
+        {@render menuItem('公開日が古い順', 'published_at')}
+        {@render menuItem('再生回数が多い順', '-view_count')}
+        {@render menuItem('再生回数が少ない順', 'view_count')}
       </DropdownMenu.Group>
     </DropdownMenu.Content>
   </DropdownMenu.Root>
+{/snippet}
+
+{#snippet menuItem(lable: string, value: string)}
+  <DropdownMenu.Item class="hover:cursor-pointer" onclick={() => handleSort(value)}>
+    {lable}
+  </DropdownMenu.Item>
 {/snippet}
