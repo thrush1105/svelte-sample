@@ -1,10 +1,10 @@
 <script lang="ts">
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+  import * as Database from '$lib/database.types';
   import { Ellipsis, Trash2 } from '@lucide/svelte';
-  import { type VideoRow } from './type';
 
   type Props = {
-    data: VideoRow;
+    data: Database.YoutubeVideo;
     onDelete?: (id: number) => void;
   };
 

@@ -2,7 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { fail, message, setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { Actions, PageServerLoad } from './$types.js';
-import { fetchVideoByVideoId, fetchVideos, saveVideo } from './api.js';
+import { fetchVideoByVideoId, saveVideo } from './api.js';
 import { fetchVideoInfo } from './api.server.js';
 import { formSchema, paramsSchema } from './schema';
 import { extractVideoId } from './utils.js';
@@ -24,7 +24,6 @@ export const load: PageServerLoad = async ({ url, locals: { supabase, user } }) 
 
   return {
     params: params,
-    videos: fetchVideos(supabase, params.data, user.id), // 名前のリストを取得する。
     form: await superValidate(zod(formSchema))
   };
 };
