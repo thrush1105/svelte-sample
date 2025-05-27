@@ -53,3 +53,11 @@ export const updateUrlQuery = async (
     ...opts
   });
 };
+
+export const parseStringToInt = (value: string | null | undefined) => {
+  if (typeof value === 'string') {
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? null : parsed;
+  }
+  return null;
+};

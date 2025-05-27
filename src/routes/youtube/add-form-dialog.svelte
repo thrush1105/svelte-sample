@@ -17,8 +17,9 @@
 </script>
 
 <Dialog.Root bind:open>
-  <Dialog.Trigger class={cn(buttonVariants({ variant: 'outline', size: 'icon' }), 'rounded-full')}>
+  <Dialog.Trigger class={cn(buttonVariants({ variant: 'outline' }))}>
     <Plus />
+    追加
   </Dialog.Trigger>
   <Dialog.Content interactOutsideBehavior="close">
     <Dialog.Header>

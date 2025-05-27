@@ -1,29 +1,38 @@
 <script lang="ts">
   import { invalidateAll } from '$app/navigation';
   import Loading from '$lib/components/loading.svelte';
+  import MyDropdownMenu from '$lib/components/my-dropdown-menu.svelte';
   import SearchInput from '$lib/components/search-input.svelte';
   import * as Alert from '$lib/components/ui/alert/index.js';
-  import Button, { buttonVariants } from '$lib/components/ui/button/button.svelte';
-  import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+  import Button from '$lib/components/ui/button/button.svelte';
   import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-  import type * as Database from '$lib/database.types';
-  import { cn, updateUrlQuery } from '$lib/utils.js';
-  import { ArrowDownUp, CircleAlertIcon, RotateCw } from '@lucide/svelte';
+  import type { YoutubeVideo } from '$lib/models/YoutubeVideo.js';
+  import { updateUrlQuery } from '$lib/utils.js';
+  import { CircleAlertIcon, RotateCw } from '@lucide/svelte';
   import { InfiniteLoader, LoaderState } from 'svelte-infinite';
   import type { Infer } from 'sveltekit-superforms';
   import type { PageProps } from './$types.js';
   import AddFormDialog from './add-form-dialog.svelte';
-  import { countVideos, deleteVideo, fetchVideos } from './api.js';
+  import { countVideos, deleteVideo, selectVideos } from './api.js';
   import ErrorDialog from './error-dialog.svelte';
   import type { ParamsSchema } from './schema.js';
   import VideoView from './video-view.svelte';
 
   const loaderState = new LoaderState();
 
+  const sortOptions = [
+    { label: '追加日が新しい順', value: '-created_at' },
+    { label: '追加日が古い順', value: 'created_at' },
+    { label: '公開日が新しい順', value: '-published_at' },
+    { label: '公開日が古い順', value: 'published_at' },
+    { label: '再生回数が多い順', value: '-view_count' },
+    { label: '再生回数が少ない順', value: 'view_count' }
+  ];
+
   let { data }: PageProps = $props();
 
-  let items = $state<Database.YoutubeVideo[]>([]);
-  let search = $state<Infer<ParamsSchema>>(data.params.data);
+  let items = $state<YoutubeVideo['Row'][]>([]);
+  let search = $state<Infer<ParamsSchema>>(data.params);
   let pageNumber = $state(1);
   let maxPageNumber = $state(0);
   let isLoading = $state(false);
@@ -36,11 +45,10 @@
   const loadMore = async () => {
     if (pageNumber === 1) {
       const { count } = await countVideos(data.supabase, search, data.user?.id);
-
       maxPageNumber = Math.ceil((count ?? 0) / 20);
     }
 
-    const { data: videos, error } = await fetchVideos(
+    const { data: videos, error } = await selectVideos(
       data.supabase,
       search,
       data.user?.id,
@@ -84,12 +92,7 @@
    * URLのクエリパラメータを更新する。
    */
   const handleSearch = async () => {
-    if (search.q) {
-      updateUrlQuery({ q: search.q });
-    } else {
-      updateUrlQuery({ q: null });
-    }
-
+    updateUrlQuery({ q: search.q || null });
     reload();
   };
 
@@ -97,11 +100,8 @@
    * ソートが選択されたときの処理。
    * URLのクエリパラメータを更新する。
    */
-  const handleSort = async (sort: string) => {
-    search.sort = sort;
-
-    updateUrlQuery({ sort: search.sort });
-
+  const handleSort = async () => {
+    updateUrlQuery({ sort: search.sort || null });
     reload();
   };
 
@@ -123,6 +123,7 @@
     isLoading = false;
 
     if (errorOnDelete) {
+      console.error(errorOnDelete);
       dialog.open = true;
       dialog.message = errorOnDelete.message;
     } else {
@@ -140,7 +141,7 @@
 
   <div class="flex gap-4">
     <AddFormDialog {data} onUpdated={reload} />
-    {@render sortMenu()}
+    <MyDropdownMenu options={sortOptions} bind:value={search.sort} onSelect={handleSort} />
   </div>
 
   <InfiniteLoader {loaderState} triggerLoad={loadMore} loopMaxCalls={5}>
@@ -181,29 +182,3 @@
 <Loading loading={isLoading} />
 
 <ErrorDialog bind:open={dialog.open} message={dialog.message} />
-
-{#snippet sortMenu()}
-  <DropdownMenu.Root>
-    <DropdownMenu.Trigger
-      class={cn(buttonVariants({ variant: 'outline', size: 'icon' }), 'rounded-full')}
-    >
-      <ArrowDownUp size={20} />
-    </DropdownMenu.Trigger>
-    <DropdownMenu.Content>
-      <DropdownMenu.Group>
-        {@render menuItem('追加日が新しい順', '-created_at')}
-        {@render menuItem('追加日が古い順', 'created_at')}
-        {@render menuItem('公開日が新しい順', '-published_at')}
-        {@render menuItem('公開日が古い順', 'published_at')}
-        {@render menuItem('再生回数が多い順', '-view_count')}
-        {@render menuItem('再生回数が少ない順', 'view_count')}
-      </DropdownMenu.Group>
-    </DropdownMenu.Content>
-  </DropdownMenu.Root>
-{/snippet}
-
-{#snippet menuItem(lable: string, value: string)}
-  <DropdownMenu.Item class="hover:cursor-pointer" onclick={() => handleSort(value)}>
-    {lable}
-  </DropdownMenu.Item>
-{/snippet}

@@ -1,10 +1,10 @@
 <script lang="ts">
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-  import * as Database from '$lib/database.types';
+  import type { YoutubeVideo } from '$lib/models/YoutubeVideo';
   import { Ellipsis, Trash2 } from '@lucide/svelte';
 
   type Props = {
-    data: Database.YoutubeVideo;
+    data: YoutubeVideo['Row'];
     onDelete?: (id: number) => void;
   };
 
@@ -13,12 +13,13 @@
   let url = $derived(`https://www.youtube.com/watch?v=${data.video_id}`);
   let channelUrl = $derived(`https://www.youtube.com/channel/${data.channel_id}`);
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString();
+  const formatDate = (date: string | null) => {
+    if (!date) return '';
+    return new Date(date).toLocaleString();
   };
 
-  const formatViewCount = (views: number | null) => {
-    return views === null ? '' : `${views.toLocaleString()} views`;
+  const formatViewCount = (count: number | null) => {
+    return count === null ? '' : `${count.toLocaleString()} views`;
   };
 
   const handleDelete = () => {
@@ -62,7 +63,7 @@
     </DropdownMenu.Trigger>
     <DropdownMenu.Content>
       <DropdownMenu.Group>
-        <DropdownMenu.Item class="hover:cursor-pointer" onclick={handleDelete}>
+        <DropdownMenu.Item class="py-2.5 hover:cursor-pointer" onclick={handleDelete}>
           <Trash2 />
           削除
         </DropdownMenu.Item>

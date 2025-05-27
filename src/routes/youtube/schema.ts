@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const paramsSchema = z.object({
   q: z.string().optional(),
-  sort: z.string().optional()
+  sort: z.string().optional().default('-created_at')
 });
 
 export type ParamsSchema = typeof paramsSchema;

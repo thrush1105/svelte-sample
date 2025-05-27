@@ -1,14 +1,12 @@
-import * as Database from '$lib/database.types';
+import type { YoutubeVideo } from '$lib/models/YoutubeVideo';
 import type { Infer } from 'sveltekit-superforms';
 import type { ParamsSchema } from './schema';
-import type { Video } from './type';
 
 const tableName = 'youtube_videos';
 
 /**
  * 動画の件数の件数を取得する。
  * @param params クエリパラメータ
- * @returns Promise<count> 動画の件数
  */
 export const countVideos = async (
   supabase: App.Locals['supabase'],
@@ -31,9 +29,8 @@ export const countVideos = async (
 /**
  * 動画のリストを取得する。
  * @param params クエリパラメータ
- * @returns Promise<YoutubeVideo[]> 動画のリスト
  */
-export const fetchVideos = async (
+export const selectVideos = async (
   supabase: App.Locals['supabase'],
   params: Infer<ParamsSchema>,
   userId: string | undefined,
@@ -57,15 +54,16 @@ export const fetchVideos = async (
   const perPage = 20;
   const from = 20 * (pageNumber - 1);
   const to = from + perPage - 1;
+
   query = query.range(from, to);
 
-  return query.overrideTypes<Array<Database.YoutubeVideo>, { merge: false }>();
+  return query.overrideTypes<Array<YoutubeVideo['Row']>, { merge: false }>();
 };
 
 /**
  * 動画IDで動画を取得する。
  */
-export const fetchVideoByVideoId = async (
+export const selectVideoByVideoId = async (
   supabase: App.Locals['supabase'],
   videoId: string,
   userId: string
@@ -76,43 +74,47 @@ export const fetchVideoByVideoId = async (
     .eq('video_id', videoId)
     .eq('user_id', userId)
     .maybeSingle()
-    .overrideTypes<Database.YoutubeVideo>();
+    .overrideTypes<YoutubeVideo['Row']>();
 };
 
 /**
  * 動画を保存する。
  * @param value 保存する値
- * @returns Promise<YoutubeVideo> 保存した動画
  */
-export const saveVideo = async (supabase: App.Locals['supabase'], value: Video) => {
+export const saveVideo = async (
+  supabase: App.Locals['supabase'],
+  value: YoutubeVideo['Insert']
+) => {
   return supabase
     .from(tableName)
     .insert(value)
     .select()
     .single()
-    .overrideTypes<Database.YoutubeVideo>();
+    .overrideTypes<YoutubeVideo['Row']>();
 };
 
 /**
  * 動画を更新する。
  * @param id ID
  * @param value 更新する値
- * @returns Promise<YoutubeVideo> 更新した動画
  */
-export const updateVideo = async (supabase: App.Locals['supabase'], id: number, value: Video) => {
+export const updateVideo = async (
+  supabase: App.Locals['supabase'],
+  id: number,
+  value: YoutubeVideo['Update']
+) => {
   return supabase
     .from(tableName)
     .update(value)
     .eq('id', id)
     .select()
     .single()
-    .overrideTypes<Database.YoutubeVideo>();
+    .overrideTypes<YoutubeVideo['Row']>();
 };
 
 /**
  * 動画を削除する。
  * @param id ID
- * @returns Promise<void>
  */
 export const deleteVideo = async (supabase: App.Locals['supabase'], id: number) => {
   return supabase.from(tableName).delete().eq('id', id);
