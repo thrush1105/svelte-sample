@@ -7,14 +7,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const MINIMUM_PASSWORD_LENGTH = 6;
+export const getAppUrl = () => {
+  const env = process?.env?.VERCEL_ENV;
 
-export class AppError extends Error {
-  constructor(e?: string) {
-    super(e);
-    this.name = new.target.name;
+  if (env === 'production') {
+    return process?.env.VERCEL_PROJECT_PRODUCTION_URL;
+  } else if (env === 'preview') {
+    return process?.env.VERCEL_BRANCH_URL;
+  } else {
+    return process?.env?.VERCEL_URL;
   }
-}
+};
 
 /**
  * URLクエリパラメータを更新する。

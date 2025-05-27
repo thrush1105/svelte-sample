@@ -1,46 +1,17 @@
 <script lang="ts">
-  import PasswordInput from '$lib/components/password-input.svelte';
-  import { Button } from '$lib/components/ui/button/index.js';
-  import { Label } from '$lib/components/ui/label/index.js';
+  import Button from '$lib/components/ui/button/button.svelte';
   import type { PageProps } from './$types';
+  import UpdatePasswordForm from './update-password-form.svelte';
 
-  let { form }: PageProps = $props();
-
-  let currentPassword = $state('');
-  let newPassword = $state('');
-  let confirmNewPassword = $state('');
+  let { data }: PageProps = $props();
 </script>
 
 <svelte:head>
   <title>パスワード変更</title>
 </svelte:head>
 
-<p class="text-2xl font-bold">パスワード変更</p>
-{#if form?.error}
-  <p class="text-destructive">{form.error.message}</p>
-{/if}
-<form method="POST" action="?/updatePassword">
-  <div class="space-y-4">
-    <div>
-      <Label>現在のパスワード</Label>
-      <PasswordInput
-        bind:value={currentPassword}
-        name="currentPassword"
-        placeholder="現在のパスワード"
-      />
-    </div>
-    <div>
-      <Label>新しいパスワード</Label>
-      <PasswordInput bind:value={newPassword} name="newPassword" placeholder="新しいパスワード" />
-    </div>
-    <div>
-      <Label>新しいパスワード（確認）</Label>
-      <PasswordInput
-        bind:value={confirmNewPassword}
-        name="confirmNewPassword"
-        placeholder="新しいパスワード（確認）"
-      />
-    </div>
-    <Button type="submit" class="w-full">変更する</Button>
-  </div>
-</form>
+<p class="text-3xl font-bold">パスワード変更</p>
+
+<UpdatePasswordForm {data} />
+
+<Button variant="secondary" class="w-full" onclick={() => history.back()}>戻る</Button>

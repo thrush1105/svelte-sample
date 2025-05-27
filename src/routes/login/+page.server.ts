@@ -1,49 +1,52 @@
+import { loginFormSchema } from '$lib/schema/login';
+import { getAppUrl } from '$lib/utils';
 import type { Provider } from '@supabase/supabase-js';
-import { fail, redirect } from '@sveltejs/kit';
-import type { Actions } from './$types';
-
-const getVercelUrl = () => {
-  const env = process?.env?.VERCEL_ENV;
-  if (env === 'production') {
-    return process?.env.VERCEL_PROJECT_PRODUCTION_URL;
-  } else if (env === 'preview') {
-    return process?.env.VERCEL_BRANCH_URL;
-  } else {
-    return process?.env?.VERCEL_URL;
-  }
-};
+import { error, fail, redirect } from '@sveltejs/kit';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import type { Actions, PageServerLoad } from './$types';
 
 const getRedirectUrl = () => {
-  let url = getVercelUrl() ?? 'http://localhost:3000/';
-  // Make sure to include `https://` when not localhost.
+  let url = getAppUrl() ?? 'http://localhost:3000/';
   url = url.startsWith('http') ? url : `https://${url}`;
-  // Make sure to include a trailing `/`.
   url = url.endsWith('/') ? url : `${url}/`;
   return new URL('/login/callback', url).toString();
 };
 
+export const load: PageServerLoad = async () => {
+  return {
+    form: await superValidate(zod(loginFormSchema))
+  };
+};
+
 export const actions: Actions = {
   login: async ({ request, locals: { supabase } }) => {
-    const formData = await request.formData();
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
+    const form = await superValidate(request, zod(loginFormSchema));
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (!form.valid) {
+      console.error(form.errors);
+      return fail(400, { form });
+    }
 
-    if (error) {
-      console.error(error);
-      return fail(400, { email, error: { message: error.message } });
+    const { error: errorOnSignIn } = await supabase.auth.signInWithPassword({
+      email: form.data.email,
+      password: form.data.password
+    });
+
+    if (errorOnSignIn) {
+      console.error(errorOnSignIn);
+      return message(form, errorOnSignIn.message, { status: 400 });
     }
 
     redirect(303, '/dashboard');
   },
 
   logout: async ({ locals: { supabase } }) => {
-    const { error } = await supabase.auth.signOut();
+    const { error: errorOnSignOut } = await supabase.auth.signOut();
 
-    if (error) {
-      console.error(error);
-      return fail(400, { error: { message: error.message } });
+    if (errorOnSignOut) {
+      console.error(errorOnSignOut);
+      error(500);
     }
 
     redirect(303, '/login');
@@ -51,16 +54,17 @@ export const actions: Actions = {
 
   loginWithOAuth: async ({ request, locals: { supabase } }) => {
     const formData = await request.formData();
-    const provider = formData.get('provider') as Provider;
 
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: provider,
+    const provider = formData.get('provider');
+
+    const { data, error: errorOnSignIn } = await supabase.auth.signInWithOAuth({
+      provider: provider as Provider,
       options: { redirectTo: getRedirectUrl() }
     });
 
-    if (error) {
-      console.error(error);
-      return fail(400, { error: { message: error.message } });
+    if (errorOnSignIn) {
+      console.error(errorOnSignIn);
+      error(500);
     }
 
     redirect(303, data.url);

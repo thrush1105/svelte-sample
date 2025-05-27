@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { MINIMUM_PASSWORD_LENGTH } from '$lib/utils';
   import { Eye, EyeOff } from '@lucide/svelte';
   import Input from './ui/input/input.svelte';
 
@@ -15,7 +14,7 @@
     {name}
     {placeholder}
     required
-    minlength={MINIMUM_PASSWORD_LENGTH}
+    minlength={8}
     class="w-full pr-10"
   />
   <button
