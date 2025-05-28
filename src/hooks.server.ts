@@ -74,4 +74,16 @@ const authGuard: Handle = async ({ event, resolve }) => {
   return resolve(event);
 };
 
-export const handle: Handle = sequence(supabase, authGuard);
+const logRequest: Handle = async ({ event, resolve }) => {
+  console.log(
+    new Date().toLocaleString(),
+    event.getClientAddress(),
+    event.url.pathname,
+    event.url.search,
+    event.locals.user?.id
+  );
+
+  return resolve(event);
+};
+
+export const handle: Handle = sequence(supabase, authGuard, logRequest);

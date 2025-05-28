@@ -30,7 +30,15 @@ export const actions: Actions = {
 
     if (errorOnSignIn) {
       console.error(errorOnSignIn);
-      return setError(form, 'currentPassword', '現在のパスワードが正しくありません。');
+
+      let msg;
+      if (errorOnSignIn.code === 'invalid_credentials') {
+        msg = '現在のパスワードが正しくありません';
+      } else {
+        msg = `エラーが発生しました: ${errorOnSignIn.code}`;
+      }
+
+      return setError(form, 'currentPassword', msg);
     }
 
     const { error: errorOnUpdate } = await supabase.auth.updateUser({
