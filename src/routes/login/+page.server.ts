@@ -35,7 +35,15 @@ export const actions: Actions = {
 
     if (errorOnSignIn) {
       console.error(errorOnSignIn);
-      return message(form, errorOnSignIn.message, { status: 400 });
+
+      let msg;
+      if (errorOnSignIn.code === 'invalid_credentials') {
+        msg = 'メールアドレスまたはパスワードが一致しません';
+      } else {
+        msg = `エラーが発生しました: ${errorOnSignIn.code}`;
+      }
+
+      return message(form, msg, { status: 400 });
     }
 
     redirect(303, '/dashboard');
