@@ -6,7 +6,7 @@ const youtube = google.youtube({
   auth: GOOGLE_API_KEY
 });
 
-export const fetchVideos = async (videoId: string) => {
+export const fetchVideoInfo = async (videoId: string) => {
   const res = await youtube.videos.list({
     part: ['snippet', 'statistics'],
     id: [videoId]

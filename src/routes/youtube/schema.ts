@@ -2,7 +2,16 @@ import { z } from 'zod';
 
 export const paramsSchema = z.object({
   q: z.string().optional(),
-  sort: z.string().optional().default('-created_at')
+  sort: z
+    .enum([
+      '-created_at',
+      'created_at',
+      '-published_at',
+      'published_at',
+      'view_count',
+      '-view_count'
+    ])
+    .default('-created_at')
 });
 
 export type ParamsSchema = typeof paramsSchema;

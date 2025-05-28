@@ -19,7 +19,7 @@ export const countVideos = async (
     .eq('user_id', userId);
 
   if (params.q)
-    query = query.or(
+    query.or(
       `title.ilike.%${params.q}%,channel_title.ilike.%${params.q}%,description.ilike.%${params.q}%`
     );
 
@@ -39,23 +39,23 @@ export const selectVideos = async (
   let query = supabase.from(tableName).select().eq('user_id', userId);
 
   if (params.q)
-    query = query.or(
+    query.or(
       `title.ilike.%${params.q}%,channel_title.ilike.%${params.q}%,description.ilike.%${params.q}%`
     );
 
   if (params.sort) {
     const sortField = params.sort.startsWith('-') ? params.sort.slice(1) : params.sort;
     const ascending = !params.sort.startsWith('-');
-    query = query.order(sortField, { ascending });
+    query.order(sortField, { ascending });
   } else {
-    query = query.order('created_at', { ascending: false });
+    query.order('created_at', { ascending: false });
   }
 
   const perPage = 20;
   const from = 20 * (pageNumber - 1);
   const to = from + perPage - 1;
 
-  query = query.range(from, to);
+  query.range(from, to);
 
   return query.overrideTypes<Array<YoutubeVideo['Row']>, { merge: false }>();
 };

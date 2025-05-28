@@ -48,16 +48,16 @@
       maxPageNumber = Math.ceil((count ?? 0) / 20);
     }
 
-    const { data: videos, error } = await selectVideos(
+    const { data: videos, error: errorOnSelect } = await selectVideos(
       data.supabase,
       search,
       data.user?.id,
       pageNumber
     );
 
-    if (error) {
-      console.error(error);
-      errorMessage = error.message;
+    if (errorOnSelect) {
+      console.error(errorOnSelect);
+      errorMessage = errorOnSelect.message;
       loaderState.error();
       return;
     }
@@ -118,17 +118,16 @@
 
     const { error: errorOnDelete } = await deleteVideo(data.supabase, id);
 
-    items = items.filter((i) => i.id !== id);
-
     isLoading = false;
 
     if (errorOnDelete) {
       console.error(errorOnDelete);
       dialog.open = true;
       dialog.message = errorOnDelete.message;
-    } else {
-      invalidateAll();
+      return;
     }
+
+    items = items.filter((i) => i.id !== id);
   };
 </script>
 

@@ -1,5 +1,5 @@
 import { AppError } from '$lib/errors';
-import { fetchVideos } from '$lib/server/youtubeDataApi';
+import { fetchVideoInfo } from '$lib/server/youtubeDataApi';
 import { parseStringToInt } from '$lib/utils';
 import { saveVideo, selectVideoByVideoId } from '../../routes/youtube/api';
 
@@ -71,7 +71,7 @@ export const saveVideoWithUrl = async (
 
   if (errorOnFetch) {
     console.error(errorOnFetch);
-    throw new AppError(errorOnFetch.message);
+    throw new AppError(`エラーが発生しました: ${errorOnFetch.code}`);
   }
 
   if (existingVideo) {
@@ -82,9 +82,8 @@ export const saveVideoWithUrl = async (
   let videoList;
 
   try {
-    videoList = await fetchVideos(videoId);
+    videoList = await fetchVideoInfo(videoId);
   } catch (error) {
-    console.error(error);
     throw new AppError('動画情報の取得に失敗しました。');
   }
 
@@ -109,7 +108,7 @@ export const saveVideoWithUrl = async (
 
   if (errorOnSave) {
     console.error(errorOnSave);
-    throw new AppError(errorOnSave.message);
+    throw new AppError(`エラーが発生しました: ${errorOnSave.code}`);
   }
 
   return video;
