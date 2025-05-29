@@ -1,7 +1,6 @@
 <script lang="ts">
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-  import { LayoutDashboard } from '@lucide/svelte';
-
+  import { LayoutDashboard, Link2 } from '@lucide/svelte';
   import { useSidebar } from '$lib/components/ui/sidebar/index.js';
 
   const sidebar = useSidebar();
@@ -11,6 +10,11 @@
       title: 'ダッシュボード',
       url: '/dashboard',
       icon: LayoutDashboard
+    },
+    {
+      title: '外部サービス連携',
+      url: '/oauth',
+      icon: Link2
     }
   ];
 </script>

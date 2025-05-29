@@ -10,9 +10,11 @@ export const getAppUrl = () => {
 
   if (env === 'production') {
     return process?.env.VERCEL_PROJECT_PRODUCTION_URL;
-  } else if (env === 'preview') {
-    return process?.env.VERCEL_BRANCH_URL;
-  } else {
-    return process?.env?.VERCEL_URL;
   }
+
+  if (env === 'preview') {
+    return process?.env.VERCEL_BRANCH_URL;
+  }
+
+  return 'http://localhost:5173';
 };
