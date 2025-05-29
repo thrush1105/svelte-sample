@@ -18,6 +18,7 @@
     {#if data.google}
       <Button href="/oauth/google">再認証</Button>
       <form method="POST" action="?/revoke">
+        <input type="hidden" name="provider" value="google">
         <Button variant="destructive" type="submit">連携解除</Button>
       </form>
     {:else}

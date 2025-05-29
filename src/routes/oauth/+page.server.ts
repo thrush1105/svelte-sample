@@ -7,22 +7,28 @@ export const load: PageServerLoad = async ({ locals: { user } }) => {
     redirect(303, '/login');
   }
 
-  const google = await new Google().authorize(user.id);
+  const authorized = await new Google().authorize(user.id);
 
-  if (!google) {
+  if (!authorized) {
     return { google: null };
   }
 
-  return { google: google.credentials };
+  return { google: authorized.credentials };
 };
 
 export const actions: Actions = {
-  revoke: async ({ locals: { user } }) => {
+  revoke: async ({ request, locals: { user } }) => {
     if (!user) {
       redirect(303, '/login');
     }
 
-    await new Google().revokeToken(user.id);
+    const formData = await request.formData();
+
+    const provider = formData.get('provider');
+
+    if (provider === 'google') {
+      await new Google().revokeToken(user.id);
+    }
 
     return {};
   }

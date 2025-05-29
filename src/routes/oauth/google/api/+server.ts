@@ -22,7 +22,5 @@ export const GET: RequestHandler = async ({ locals: { user } }) => {
     maxResults: 50
   });
 
-  console.log(res.config.method, res.config.url, res.status);
-
-  return json(res);
+  return json(res.data);
 };

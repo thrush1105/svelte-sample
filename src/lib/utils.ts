@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const getAppUrl = (fallback: string = 'http://localhost:3000') => {
+export const getAppUrl = (fallback: string = 'http://localhost:5173') => {
   const env = process?.env?.VERCEL_ENV;
 
   let url;

@@ -31,7 +31,7 @@ export class Google extends OAuth2 {
 
     console.log('アクセストークンを発行');
 
-    const { error: errorOnUpsert } = await supabase.from('oauth_tokens').upsert(
+    const { error } = await supabase.from('oauth_tokens').upsert(
       {
         user_id: user_id,
         provider: 'google',
@@ -46,26 +46,30 @@ export class Google extends OAuth2 {
       { onConflict: 'user_id, provider' }
     );
 
-    if (errorOnUpsert) {
-      console.error(errorOnUpsert);
-      throw new AppError(`アクセストークンの保存に失敗: ${errorOnUpsert.message}`);
+    if (error) {
+      console.error(error);
+      throw new AppError(`アクセストークンの保存に失敗: ${error.message}`);
     }
 
     console.log('アクセストークンを保存');
 
     client.setCredentials(tokens);
 
-    return tokens;
+    return client;
   }
 
   public async authorize(user_id: string) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('oauth_tokens')
       .select('raw_token')
       .eq('user_id', user_id)
       .eq('provider', this.provider)
-      .maybeSingle()
-      .throwOnError();
+      .maybeSingle();
+
+    if (error) {
+      console.error(error);
+      throw new AppError(`アクセストークンの取得に失敗: ${error.message}`);
+    }
 
     if (!data) {
       console.log('アクセストークンが未保存');
@@ -93,19 +97,19 @@ export class Google extends OAuth2 {
         },
         { onConflict: 'user_id, provider' }
       );
+
       if (error) {
         console.error(error);
         throw new AppError(`アクセストークンの保存に失敗: ${error.message}`);
       }
-      console.log('アクセストークンを保存');
+
+      console.log('アクセストークンを更新');
     });
 
     return client;
   }
 
   public async revokeToken(user_id: string) {
-    const client = this.newClient();
-
     const { data, error: errorOnSelect } = await supabase
       .from('oauth_tokens')
       .select('raw_token')
@@ -114,7 +118,7 @@ export class Google extends OAuth2 {
       .maybeSingle();
 
     if (errorOnSelect) {
-      console.log(errorOnSelect);
+      console.error(errorOnSelect);
       throw new AppError(`アクセストークンの取得に失敗: ${errorOnSelect.message}`);
     }
 
@@ -124,6 +128,8 @@ export class Google extends OAuth2 {
     }
 
     console.log('アクセストークンを取得');
+
+    const client = this.newClient();
 
     client.setCredentials(data.raw_token);
 
@@ -138,7 +144,7 @@ export class Google extends OAuth2 {
       .eq('provider', this.provider);
 
     if (errorOnDelete) {
-      console.log(errorOnSelect);
+      console.error(errorOnDelete);
       throw new AppError(`アクセストークンの削除に失敗: ${errorOnDelete.message}`);
     }
 
