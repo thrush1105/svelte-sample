@@ -7,10 +7,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { Actions, PageServerLoad } from './$types';
 
 const getRedirectUrl = () => {
-  let url = getAppUrl() ?? 'http://localhost:3000/';
-  url = url.startsWith('http') ? url : `https://${url}`;
-  url = url.endsWith('/') ? url : `${url}/`;
-  return new URL('/login/callback', url).toString();
+  return new URL('/login/callback', getAppUrl()).toString();
 };
 
 export const load: PageServerLoad = async () => {
