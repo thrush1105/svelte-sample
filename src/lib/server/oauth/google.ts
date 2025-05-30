@@ -1,22 +1,56 @@
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '$env/static/private';
 import { AppError } from '$lib/errors';
+import logger from '$lib/logger';
 import { supabase } from '$lib/server/supabaseClient';
 import { getAppUrl } from '$lib/utils';
 import { google } from 'googleapis';
 import { OAuth2 } from './oauth';
 
+type Token = {
+  refresh_token?: string | null;
+  expiry_date?: number | null;
+  access_token?: string | null;
+  token_type?: string | null;
+  id_token?: string | null;
+  scope?: string;
+};
+
 export class Google extends OAuth2 {
   constructor() {
     const scopes = ['https://www.googleapis.com/auth/youtube.readonly'];
     const redirectUri = new URL('/oauth/google/callback', getAppUrl()).toString();
+
     super('google', scopes, redirectUri);
   }
 
   private newClient = () =>
     new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, this.redirectUri);
 
+  private async updateToken(token: Token, user_id: string) {
+    const { error } = await supabase.from('oauth_tokens').upsert(
+      {
+        user_id: user_id,
+        provider: this.provider,
+        access_token: token.access_token,
+        refresh_token: token.refresh_token,
+        scope: token.scope,
+        token_type: token.token_type,
+        expires_in: token.expiry_date,
+        raw_token: token,
+        updated_at: new Date()
+      },
+      { onConflict: 'user_id, provider' }
+    );
+
+    if (error) {
+      logger.error(error);
+      throw new AppError(`アクセストークンの保存に失敗: ${error.message}`);
+    }
+  }
+
   public generateAuthUrl() {
     const client = this.newClient();
+
     return client.generateAuthUrl({
       access_type: 'offline',
       prompt: 'consent',
@@ -28,30 +62,10 @@ export class Google extends OAuth2 {
     const client = this.newClient();
 
     const { tokens } = await client.getToken(code);
+    logger.info('アクセストークンを発行', { user_id, token: tokens });
 
-    console.log('アクセストークンを発行');
-
-    const { error } = await supabase.from('oauth_tokens').upsert(
-      {
-        user_id: user_id,
-        provider: 'google',
-        access_token: tokens.access_token,
-        refresh_token: tokens.refresh_token,
-        scope: tokens.scope,
-        token_type: tokens.token_type,
-        expires_in: tokens.expiry_date,
-        raw_token: tokens,
-        updated_at: new Date()
-      },
-      { onConflict: 'user_id, provider' }
-    );
-
-    if (error) {
-      console.error(error);
-      throw new AppError(`アクセストークンの保存に失敗: ${error.message}`);
-    }
-
-    console.log('アクセストークンを保存');
+    await this.updateToken(tokens, user_id);
+    logger.info('アクセストークンを保存', { user_id });
 
     client.setCredentials(tokens);
 
@@ -59,95 +73,52 @@ export class Google extends OAuth2 {
   }
 
   public async authorize(user_id: string) {
-    const { data, error } = await supabase
-      .from('oauth_tokens')
-      .select('raw_token')
-      .eq('user_id', user_id)
-      .eq('provider', this.provider)
-      .maybeSingle();
+    const client = this.newClient();
 
-    if (error) {
-      console.error(error);
-      throw new AppError(`アクセストークンの取得に失敗: ${error.message}`);
-    }
+    const data = await this.selectToken(user_id);
 
     if (!data) {
-      console.log('アクセストークンが未保存');
+      logger.info('アクセストークンが未保存', { user_id });
       return null;
     }
 
-    console.log('アクセストークンを取得');
-
-    const client = this.newClient();
+    logger.info('アクセストークンを取得', { user_id });
 
     client.setCredentials(data.raw_token);
 
     client.on('tokens', async (tokens) => {
-      const { error } = await supabase.from('oauth_tokens').upsert(
-        {
-          user_id: user_id,
-          provider: 'google',
-          access_token: tokens.access_token,
-          refresh_token: tokens.refresh_token,
-          scope: tokens.scope,
-          token_type: tokens.token_type,
-          expires_in: tokens.expiry_date,
-          raw_token: tokens,
-          updated_at: new Date()
-        },
-        { onConflict: 'user_id, provider' }
-      );
-
-      if (error) {
-        console.error(error);
-        throw new AppError(`アクセストークンの保存に失敗: ${error.message}`);
-      }
-
-      console.log('アクセストークンを更新');
+      await this.updateToken({ ...tokens, refresh_token: data.raw_token.refresh_token }, user_id);
+      logger.info('アクセストークンを更新', { user_id, token: tokens });
     });
+
+    if (Date.now() > data.raw_token.expiry_date) {
+      logger.info('アクセストークンが有効期限切れ', { user_id });
+      await client.refreshAccessToken();
+    }
 
     return client;
   }
 
   public async revokeToken(user_id: string) {
-    const { data, error: errorOnSelect } = await supabase
-      .from('oauth_tokens')
-      .select('raw_token')
-      .eq('user_id', user_id)
-      .eq('provider', this.provider)
-      .maybeSingle();
+    const client = this.newClient();
 
-    if (errorOnSelect) {
-      console.error(errorOnSelect);
-      throw new AppError(`アクセストークンの取得に失敗: ${errorOnSelect.message}`);
-    }
+    const data = await this.selectToken(user_id);
 
     if (!data) {
-      console.log('アクセストークンが未保存');
+      logger.info('アクセストークンが未保存', { user_id });
       return;
     }
 
-    console.log('アクセストークンを取得');
-
-    const client = this.newClient();
+    logger.info('アクセストークンを取得', { user_id });
 
     client.setCredentials(data.raw_token);
 
     client.revokeCredentials();
 
-    console.log('アクセストークンを無効化');
+    logger.info('アクセストークンを無効化', { user_id });
 
-    const { error: errorOnDelete } = await supabase
-      .from('oauth_tokens')
-      .delete()
-      .eq('user_id', user_id)
-      .eq('provider', this.provider);
+    await this.deleteToken(user_id);
 
-    if (errorOnDelete) {
-      console.error(errorOnDelete);
-      throw new AppError(`アクセストークンの削除に失敗: ${errorOnDelete.message}`);
-    }
-
-    console.log('アクセストークンを削除');
+    logger.info('アクセストークンを削除', { user_id });
   }
 }

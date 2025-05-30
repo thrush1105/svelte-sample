@@ -1,3 +1,4 @@
+import logger from '$lib/logger';
 import { Google } from '$lib/server/oauth/google';
 import { error, isRedirect, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
@@ -20,7 +21,7 @@ export const GET: RequestHandler = async ({ url, locals: { user } }) => {
     if (isRedirect(e)) {
       throw e;
     }
-    console.error(e);
+    logger.error(e);
     error(500);
   }
 };
