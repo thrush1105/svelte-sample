@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-  import { LayoutDashboard, Link2 } from '@lucide/svelte';
   import { useSidebar } from '$lib/components/ui/sidebar/index.js';
+  import { LayoutDashboard, Link2, Youtube } from '@lucide/svelte';
 
   const sidebar = useSidebar();
 
@@ -15,6 +15,11 @@
       title: '外部サービス連携',
       url: '/oauth',
       icon: Link2
+    },
+    {
+      title: 'YouTube',
+      url: '/youtube',
+      icon: Youtube
     }
   ];
 </script>
