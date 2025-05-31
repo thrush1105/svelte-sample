@@ -4,11 +4,11 @@
   import { Github } from '@lucide/svelte';
 </script>
 
-<form method="POST" action="?/loginWithOAuth">
+<form method="POST" action="/login?/loginWithOAuth">
   <input type="hidden" name="provider" value="github" />
   <Button type="submit" variant="outline" class="w-full">
     <Github />
-    GitHubでログイン
+    GitHubで登録
   </Button>
 </form>
 
@@ -16,6 +16,6 @@
   <input type="hidden" name="provider" value="google" />
   <Button type="submit" variant="outline" class="w-full">
     <GoogleIcon />
-    Googleでログイン
+    Googleで登録
   </Button>
 </form>
