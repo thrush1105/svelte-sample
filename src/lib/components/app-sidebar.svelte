@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import { useSidebar } from '$lib/components/ui/sidebar/index.js';
-  import { LayoutDashboard, Link2, Youtube } from '@lucide/svelte';
+  import { FileText, LayoutDashboard, Link2, Youtube } from '@lucide/svelte';
 
   const sidebar = useSidebar();
 
@@ -20,6 +20,11 @@
       title: 'YouTube',
       url: '/youtube',
       icon: Youtube
+    },
+    {
+      title: '給与明細',
+      url: '/payslip/monthly',
+      icon: FileText
     }
   ];
 </script>
