@@ -1,8 +1,8 @@
+import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
+import logger from '$lib/logger';
 import { createServerClient } from '@supabase/ssr';
 import { type Handle, redirect } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
-
-import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
 
 const supabase: Handle = async ({ event, resolve }) => {
   /**
@@ -67,11 +67,30 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.session = session;
   event.locals.user = user;
 
-  if (!event.locals.session && !['/', '/login', '/login/callback'].includes(event.url.pathname)) {
+  if (
+    !event.locals.session &&
+    !['/', '/login', '/login/callback', '/signup'].includes(event.url.pathname)
+  ) {
     redirect(303, '/login');
   }
 
   return resolve(event);
 };
 
-export const handle: Handle = sequence(supabase, authGuard);
+const logRequest: Handle = async ({ event, resolve }) => {
+  const response = await resolve(event);
+
+  logger.info(
+    [
+      event.getClientAddress(),
+      event.request.method,
+      event.url.pathname + event.url.search,
+      response.status
+    ].join(' '),
+    { user_id: event.locals.user?.id }
+  );
+
+  return response;
+};
+
+export const handle: Handle = sequence(supabase, authGuard, logRequest);

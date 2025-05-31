@@ -37,7 +37,7 @@
   {/if}
   <div class="w-full">
     {@render header()}
-    <div class="mx-auto max-w-3xl space-y-4 p-4">
+    <div class="mx-auto max-w-7xl space-y-4 p-4">
       {@render children()}
     </div>
   </div>
@@ -58,6 +58,7 @@
         </form>
       {:else}
         <a href="/login" class="flex justify-end">ログイン</a>
+        <a href="/signup" class="flex justify-end">新規登録</a>
       {/if}
     </div>
   </div>

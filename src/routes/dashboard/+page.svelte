@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { buttonVariants } from '$lib/components/ui/button/button.svelte';
+  import Button from '$lib/components/ui/button/button.svelte';
   import { Label } from '$lib/components/ui/label/index.js';
-  import { cn } from '$lib/utils';
 
   let { data } = $props();
   let { user } = $derived(data);
@@ -11,11 +10,11 @@
   <title>ダッシュボード</title>
 </svelte:head>
 
-<p class="text-2xl font-bold">ダッシュボード</p>
+<p class="text-3xl font-bold">ダッシュボード</p>
 
 {#if user}
   <div>
-    <Label>ID</Label>
+    <Label>ユーザーID</Label>
     <p class="text-muted-foreground">{user.id}</p>
   </div>
   <div>
@@ -25,8 +24,6 @@
   <div>
     <Label>パスワード</Label>
     <br />
-    <a href="/update-password" class={cn(buttonVariants({ variant: 'outline' }))}>
-      パスワード変更
-    </a>
+    <Button variant="outline" href="/update-password">パスワード変更</Button>
   </div>
 {/if}

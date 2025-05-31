@@ -7,7 +7,7 @@
   import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
   import Label from '$lib/components/ui/label/label.svelte';
   import * as Select from '$lib/components/ui/select/index.js';
-  import { changeUrlQuery, cn } from '$lib/utils.js';
+  import { cn, updateUrlQuery } from '$lib/utils.js';
   import { Plus } from '@lucide/svelte';
 
   let { data } = $props();
@@ -37,14 +37,14 @@
 
   const changePage = () => {
     from = perPage * (pageNumber - 1);
-    changeUrlQuery({ page: pageNumber }, { noScroll: false });
+    updateUrlQuery({ page: pageNumber }, { noScroll: false });
   };
 
   const changePerPage = () => {
     perPage = parseInt(perPageString) || 5;
     pageNumber = Math.floor(from / perPage) + 1;
     from = perPage * (pageNumber - 1);
-    changeUrlQuery({
+    updateUrlQuery({
       page: pageNumber,
       perPage: perPage
     });
@@ -52,7 +52,7 @@
 
   const filterFavorite = () => {
     pageNumber = 1;
-    changeUrlQuery({
+    updateUrlQuery({
       favorite: favorite || null,
       page: null
     });
@@ -60,7 +60,7 @@
 
   const searchText = () => {
     pageNumber = 1;
-    changeUrlQuery({
+    updateUrlQuery({
       text: text || null,
       page: null
     });
