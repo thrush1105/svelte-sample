@@ -75,7 +75,6 @@ export const saveVideoWithUrl = async (
   }
 
   if (existingVideo) {
-    console.log(existingVideo);
     throw new AppError('この動画はすでに追加されています。');
   }
 

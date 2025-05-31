@@ -33,6 +33,7 @@
     "prettier": "^3.4.2",
     "prettier-plugin-svelte": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.10",
+    "supabase": "^2.23.4",
     "superstruct": "^2.0.2",
     "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
@@ -52,6 +53,7 @@
     "@supabase/supabase-js": "^2.49.4",
     "googleapis": "^149.0.0",
     "nprogress": "^0.2.0",
-    "svelte-infinite": "^0.5.0"
+    "svelte-infinite": "^0.5.0",
+    "winston": "^3.17.0"
   }
 }

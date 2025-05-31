@@ -58,6 +58,7 @@
         </form>
       {:else}
         <a href="/login" class="flex justify-end">ログイン</a>
+        <a href="/signup" class="flex justify-end">新規登録</a>
       {/if}
     </div>
   </div>
