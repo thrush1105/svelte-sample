@@ -3,6 +3,7 @@ import { type Handle, redirect } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
+import logger from '$lib/logger';
 
 const supabase: Handle = async ({ event, resolve }) => {
   /**
@@ -75,15 +76,19 @@ const authGuard: Handle = async ({ event, resolve }) => {
 };
 
 const logRequest: Handle = async ({ event, resolve }) => {
-  console.log(
-    new Date().toLocaleString(),
-    event.getClientAddress(),
-    event.url.pathname,
-    event.url.search,
-    event.locals.user?.id
+  const response = await resolve(event);
+
+  logger.info(
+    [
+      event.getClientAddress(),
+      event.request.method,
+      event.url.pathname + event.url.search,
+      response.status
+    ].join(' '),
+    { user_id: event.locals.user?.id }
   );
 
-  return resolve(event);
+  return response;
 };
 
 export const handle: Handle = sequence(supabase, authGuard, logRequest);
