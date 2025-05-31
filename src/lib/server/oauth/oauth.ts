@@ -32,7 +32,7 @@ export abstract class OAuth2 {
       .maybeSingle();
 
     if (error) {
-      logger.error(error);
+      logger.error(error.stack);
       throw new AppError(`アクセストークンの取得に失敗: ${error.message}`);
     }
 
@@ -47,7 +47,7 @@ export abstract class OAuth2 {
       .eq('provider', this.provider);
 
     if (error) {
-      logger.error(error);
+      logger.error(error.stack);
       throw new AppError(`アクセストークンの削除に失敗: ${error.message}`);
     }
   }

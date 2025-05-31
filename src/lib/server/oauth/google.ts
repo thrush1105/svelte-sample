@@ -26,7 +26,7 @@ export class Google extends OAuth2 {
   private newClient = () =>
     new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, this.redirectUri);
 
-  private async updateToken(token: Token, user_id: string) {
+  private async upsertToken(token: Token, user_id: string) {
     const { error } = await supabase.from('oauth_tokens').upsert(
       {
         user_id: user_id,
@@ -43,7 +43,7 @@ export class Google extends OAuth2 {
     );
 
     if (error) {
-      logger.error(error);
+      logger.error(error.stack);
       throw new AppError(`アクセストークンの保存に失敗: ${error.message}`);
     }
   }
@@ -62,9 +62,9 @@ export class Google extends OAuth2 {
     const client = this.newClient();
 
     const { tokens } = await client.getToken(code);
-    logger.info('アクセストークンを発行', { user_id, token: tokens });
+    logger.info('アクセストークンを発行', { user_id });
 
-    await this.updateToken(tokens, user_id);
+    await this.upsertToken(tokens, user_id);
     logger.info('アクセストークンを保存', { user_id });
 
     client.setCredentials(tokens);
@@ -87,8 +87,8 @@ export class Google extends OAuth2 {
     client.setCredentials(data.raw_token);
 
     client.on('tokens', async (tokens) => {
-      await this.updateToken({ ...tokens, refresh_token: data.raw_token.refresh_token }, user_id);
-      logger.info('アクセストークンを更新', { user_id, token: tokens });
+      await this.upsertToken({ ...tokens, refresh_token: data.raw_token.refresh_token }, user_id);
+      logger.info('アクセストークンを更新', { user_id });
     });
 
     if (Date.now() > data.raw_token.expiry_date) {
