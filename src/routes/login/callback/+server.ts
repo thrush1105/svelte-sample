@@ -1,8 +1,9 @@
+import logger from '$lib/logger';
 import { error, redirect } from '@sveltejs/kit';
 
 export const GET = async ({ url, locals: { supabase } }) => {
-  const code = url.searchParams.get('code') as string;
-  const errorCode = url.searchParams.get('error_code') as string;
+  const code = url.searchParams.get('code');
+  const errorCode = url.searchParams.get('error_code');
 
   if (!code) {
     if (errorCode) {
@@ -12,12 +13,17 @@ export const GET = async ({ url, locals: { supabase } }) => {
     }
   }
 
-  const { error: authError } = await supabase.auth.exchangeCodeForSession(code);
+  const {
+    data: { user },
+    error: errorOnExchangeCode
+  } = await supabase.auth.exchangeCodeForSession(code);
 
-  if (authError) {
-    console.error(authError);
-    error(400, authError);
+  if (errorOnExchangeCode) {
+    logger.error(errorOnExchangeCode.stack);
+    error(400, errorOnExchangeCode);
   }
+
+  logger.info('ソーシャルログイン', { user_id: user?.id });
 
   redirect(303, '/dashboard');
 };
