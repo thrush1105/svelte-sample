@@ -94,7 +94,7 @@ export const actions: Actions = {
   },
 
   logout: async ({ locals: { supabase, user } }) => {
-    const { error: errorOnSignOut } = await supabase.auth.signOut();
+    const { error: errorOnSignOut } = await supabase.auth.signOut({ scope: 'local' });
 
     if (errorOnSignOut) {
       logger.error(errorOnSignOut.stack);
