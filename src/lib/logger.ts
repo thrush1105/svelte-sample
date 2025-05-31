@@ -3,6 +3,7 @@ import { createLogger, format, Logger, transports } from 'winston';
 const logger: Logger = createLogger({
   level: 'info',
   format: format.combine(
+    format.errors({ stack: true }),
     format.timestamp({
       format: () => new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })
     }),

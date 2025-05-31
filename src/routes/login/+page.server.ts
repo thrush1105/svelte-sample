@@ -1,3 +1,4 @@
+import logger from '$lib/logger';
 import { loginFormSchema } from '$lib/schema/login';
 import { getAppUrl } from '$lib/utils';
 import type { Provider } from '@supabase/supabase-js';
@@ -21,17 +22,20 @@ export const actions: Actions = {
     const form = await superValidate(request, zod(loginFormSchema));
 
     if (!form.valid) {
-      console.error(form.errors);
+      logger.error(form.errors);
       return fail(400, { form });
     }
 
-    const { error: errorOnSignIn } = await supabase.auth.signInWithPassword({
+    const {
+      data: { user },
+      error: errorOnSignIn
+    } = await supabase.auth.signInWithPassword({
       email: form.data.email,
       password: form.data.password
     });
 
     if (errorOnSignIn) {
-      console.error(errorOnSignIn);
+      logger.error(errorOnSignIn.stack);
 
       let msg;
       if (errorOnSignIn.code === 'invalid_credentials') {
@@ -43,16 +47,20 @@ export const actions: Actions = {
       return message(form, msg, { status: 400 });
     }
 
+    logger.info('ログイン', { user_id: user?.id });
+
     redirect(303, '/dashboard');
   },
 
-  logout: async ({ locals: { supabase } }) => {
+  logout: async ({ locals: { supabase, user } }) => {
     const { error: errorOnSignOut } = await supabase.auth.signOut();
 
     if (errorOnSignOut) {
-      console.error(errorOnSignOut);
+      logger.error(errorOnSignOut.stack);
       error(500);
     }
+
+    logger.info('ログアウト', { user_id: user?.id });
 
     redirect(303, '/login');
   },
@@ -68,9 +76,11 @@ export const actions: Actions = {
     });
 
     if (errorOnSignIn) {
-      console.error(errorOnSignIn);
+      logger.error(errorOnSignIn.stack);
       error(500);
     }
+
+    logger.info('ソーシャルログイン要求', data);
 
     redirect(303, data.url);
   }

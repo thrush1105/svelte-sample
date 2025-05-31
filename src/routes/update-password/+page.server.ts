@@ -3,6 +3,7 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { Actions, PageServerLoad } from './$types';
+import logger from '$lib/logger';
 
 export const load: PageServerLoad = async () => {
   return {
@@ -15,7 +16,7 @@ export const actions: Actions = {
     const form = await superValidate(request, zod(updatePasswordSchema));
 
     if (!form.valid) {
-      console.error(form.errors);
+      logger.error(form.errors);
       return fail(400, { form });
     }
 
@@ -29,7 +30,7 @@ export const actions: Actions = {
     });
 
     if (errorOnSignIn) {
-      console.error(errorOnSignIn);
+      logger.error(errorOnSignIn.stack);
 
       let msg;
       if (errorOnSignIn.code === 'invalid_credentials') {
@@ -46,9 +47,11 @@ export const actions: Actions = {
     });
 
     if (errorOnUpdate) {
-      console.error(errorOnUpdate);
+      logger.error(errorOnUpdate.stack);
       error(500);
     }
+
+    logger.info('パスワード変更', { user_id: user.id });
 
     redirect(303, '/dashboard');
   }
