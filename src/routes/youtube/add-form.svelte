@@ -25,7 +25,7 @@
   const { form: formData, enhance, submitting } = form;
 </script>
 
-<form method="POST" use:enhance>
+<form method="POST" action="?/add" use:enhance>
   <div class="space-y-4">
     <Form.Field {form} name="url">
       <Form.Control>

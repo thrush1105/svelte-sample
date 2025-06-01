@@ -17,6 +17,7 @@
   import ErrorDialog from './error-dialog.svelte';
   import type { ParamsSchema } from './schema.js';
   import VideoView from './video-view.svelte';
+  import UpdateFormDialog from './update-form-dialog.svelte';
 
   const loaderState = new LoaderState();
 
@@ -141,6 +142,7 @@
   <div class="flex gap-4">
     <AddFormDialog {data} onUpdated={reload} />
     <MyDropdownMenu options={sortOptions} bind:value={search.sort} onSelect={handleSort} />
+    <UpdateFormDialog />
   </div>
 
   <InfiniteLoader {loaderState} triggerLoad={loadMore} loopMaxCalls={5}>

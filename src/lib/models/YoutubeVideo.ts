@@ -1,4 +1,6 @@
 import { AppError } from '$lib/errors';
+import logger from '$lib/logger';
+import { supabase } from '$lib/server/supabaseClient';
 import { fetchVideoInfo } from '$lib/server/youtubeDataApi';
 import { parseStringToInt } from '$lib/utils';
 import { saveVideo, selectVideoByVideoId } from '../../routes/youtube/api';
@@ -111,4 +113,63 @@ export const saveVideoWithUrl = async (
   }
 
   return video;
+};
+
+export const updateVideo = async (id: number, videoId: string) => {
+  let videoList;
+
+  try {
+    videoList = await fetchVideoInfo(videoId);
+  } catch (error) {
+    throw new AppError('動画情報の取得に失敗しました。');
+  }
+
+  if (videoList.length === 0) {
+    throw new AppError('動画情報が存在しません。');
+  }
+
+  const videoInfo = videoList[0];
+
+  await supabase
+    .from('youtube_videos')
+    .update({
+      title: videoInfo.snippet?.title ?? '',
+      channel_id: videoInfo.snippet?.channelId ?? '',
+      channel_title: videoInfo.snippet?.channelTitle ?? '',
+      thumbnail: videoInfo.snippet?.thumbnails?.medium?.url,
+      description: videoInfo.snippet?.description,
+      tags: videoInfo.snippet?.tags,
+      published_at: videoInfo.snippet?.publishedAt,
+      view_count: parseStringToInt(videoInfo.statistics?.viewCount),
+      updated_at: new Date().toUTCString()
+    })
+    .eq('id', id)
+    .throwOnError();
+};
+
+export const updateAllVideos = async (userId: string | null | undefined) => {
+  if (!userId) {
+    return;
+  }
+
+  const { data: videos } = await supabase.from('youtube_videos').select().eq('user_id', userId);
+
+  if (!videos) {
+    return;
+  }
+
+  const len = videos.length;
+
+  for (let i = 0; i < len; i++) {
+    const v = videos[i];
+    try {
+      await updateVideo(v.id, v.video_id);
+      logger.info(`動画情報を更新 [${i + 1}/${len}]`, { id: v.id });
+    } catch (e) {
+      logger.error(`動画情報の更新に失敗 [${i + 1}/${len}]`, { id: v.id });
+      logger.error(e);
+    } finally {
+      await new Promise((r) => setTimeout(r, 500)); // 500ミリ秒待機
+    }
+  }
 };

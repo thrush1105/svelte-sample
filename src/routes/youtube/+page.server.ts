@@ -1,5 +1,5 @@
 import { AppError } from '$lib/errors.js';
-import { saveVideoWithUrl } from '$lib/models/YoutubeVideo.js';
+import { saveVideoWithUrl, updateAllVideos } from '$lib/models/YoutubeVideo.js';
 import { error, redirect } from '@sveltejs/kit';
 import { fail, setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ url, locals: { user } }) => {
 };
 
 export const actions: Actions = {
-  default: async ({ request, locals: { supabase, user } }) => {
+  add: async ({ request, locals: { supabase, user } }) => {
     if (!user) {
       return redirect(303, '/login');
     }
@@ -50,5 +50,11 @@ export const actions: Actions = {
     }
 
     return { form };
+  },
+
+  update: async ({ locals: { user } }) => {
+    updateAllVideos(user?.id);
+
+    return {};
   }
 };
