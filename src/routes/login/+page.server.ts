@@ -1,3 +1,4 @@
+import { getAppUrl } from '$lib/url';
 import { error } from '@sveltejs/kit';
 import { redirect } from 'sveltekit-flash-message/server';
 import { fail, message, superValidate } from 'sveltekit-superforms';
@@ -33,7 +34,7 @@ export const actions: Actions = {
         return message(form, 'メールアドレスとパスワードが一致しません', { status: 400 });
       } else {
         console.error(errorOnSignIn);
-        error(500, 'エラーが発生しました');
+        error(500, `エラーが発生しました: ${errorOnSignIn.code}`);
       }
     }
 
@@ -45,9 +46,27 @@ export const actions: Actions = {
 
     if (errorOnSignOut) {
       console.error(errorOnSignOut);
-      error(500);
+      error(500, `エラーが発生しました: ${errorOnSignOut.code}`);
     }
 
     redirect('/login', { type: 'success', message: 'ログアウトしました' }, cookies);
+  },
+
+  loginWithOAuth: async ({ request, locals: { supabase } }) => {
+    const formData = await request.formData();
+
+    const provider = formData.get('provider');
+
+    const { data, error: errorOnSignIn } = await supabase.auth.signInWithOAuth({
+      provider: provider as any,
+      options: { redirectTo: getAppUrl('/login/callback') }
+    });
+
+    if (errorOnSignIn) {
+      console.error(errorOnSignIn);
+      error(500, `エラーが発生しました: ${errorOnSignIn.code}`);
+    }
+
+    redirect(303, data.url);
   }
 };
