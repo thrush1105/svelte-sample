@@ -8,12 +8,12 @@
   import { toast } from 'svelte-sonner';
   import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
   import { zodClient } from 'sveltekit-superforms/adapters';
-  import { loginFormSchema, type LoginFormSchema } from './schema';
+  import { signupFormSchema, type SignupFormSchema } from './schema';
 
-  let { data }: { data: { form: SuperValidated<Infer<LoginFormSchema>> } } = $props();
+  let { data }: { data: { form: SuperValidated<Infer<SignupFormSchema>> } } = $props();
 
   const form = superForm(data.form, {
-    validators: zodClient(loginFormSchema),
+    validators: zodClient(signupFormSchema),
     onError({ result }) {
       toast.error(result.error.message, { position: 'bottom-right', richColors: true });
     }
@@ -22,7 +22,7 @@
   const { form: formData, enhance, submitting, delayed, message } = form;
 </script>
 
-<form method="POST" action="?/login" use:enhance>
+<form method="POST" action="?/singup" use:enhance>
   <div class="flex flex-col space-y-4">
     {#if page.status >= 400}
       <ErrorAlert title="エラー" message={$message} />
@@ -49,7 +49,7 @@
     </Form.Field>
 
     <Form.Button disabled={$submitting}>
-      ログイン
+      登録
       {#if $delayed}
         <LoaderCircle class="animate-spin" />
       {/if}

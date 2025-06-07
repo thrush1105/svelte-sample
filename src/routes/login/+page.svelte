@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Separator from '$lib/components/ui/separator/separator.svelte';
-  import type { PageProps } from './$types.js';
+  import Separator from '$lib/components/separator.svelte';
+  import type { PageProps } from './$types';
   import LoginForm from './login-form.svelte';
   import OauthLoginForm from './oauth-login-form.svelte';
 
@@ -9,6 +9,10 @@
 
 <LoginForm {data} />
 
-<Separator />
+<Separator text="または" />
 
 <OauthLoginForm />
+
+<p class="text-center">
+  アカウントをお持ちでない方は<a href="/signup" class="underline">アカウントを作成</a>
+</p>

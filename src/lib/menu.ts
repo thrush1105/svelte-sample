@@ -1,4 +1,4 @@
-import { Home, LogIn, User } from '@lucide/svelte';
+import { Home, User } from '@lucide/svelte';
 
 export const getMenu = (login: boolean) => {
   return login
@@ -6,8 +6,5 @@ export const getMenu = (login: boolean) => {
         { title: 'ホーム', url: '/', icon: Home },
         { title: 'プロフィール', url: '/profile', icon: User }
       ]
-    : [
-        { title: 'ホーム', url: '/', icon: Home },
-        { title: 'ログイン', url: '/login', icon: LogIn }
-      ];
+    : [{ title: 'ホーム', url: '/', icon: Home }];
 };
