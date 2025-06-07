@@ -1,6 +1,7 @@
-import { error, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
+import { redirect } from 'sveltekit-flash-message/server';
 
-export const GET = async ({ url, locals: { supabase } }) => {
+export const GET = async ({ url, locals: { supabase }, cookies }) => {
   const code = url.searchParams.get('code');
   const errorCode = url.searchParams.get('error_code');
 
@@ -22,5 +23,5 @@ export const GET = async ({ url, locals: { supabase } }) => {
     error(500, `エラーが発生しました: ${errorOnExchangeCode.code}`);
   }
 
-  redirect(303, '/profile');
+  redirect('/profile', { type: 'success', message: 'ログインしました' }, cookies);
 };
