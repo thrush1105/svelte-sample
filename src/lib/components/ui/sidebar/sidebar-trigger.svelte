@@ -22,7 +22,7 @@
   data-slot="sidebar-trigger"
   variant="ghost"
   size="icon"
-  class={cn('size-7 hover:cursor-pointer', className)}
+  class={cn('size-7', className)}
   type="button"
   onclick={(e) => {
     onclick?.(e);

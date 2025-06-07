@@ -1,17 +1,18 @@
 <script lang="ts">
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import { useSidebar } from '$lib/components/ui/sidebar/index.js';
-  import { Home } from '@lucide/svelte';
+  import { getMenu } from '$lib/menu';
+  import type { User as SupabaseUser } from '@supabase/supabase-js';
 
   const sidebar = useSidebar();
 
-  const menus = [
-    {
-      title: 'Home',
-      url: '/',
-      icon: Home
-    }
-  ];
+  type Props = {
+    user?: SupabaseUser | null;
+  };
+
+  let { user }: Props = $props();
+
+  let menu = $derived(getMenu(!!user));
 </script>
 
 <Sidebar.Root>
@@ -20,7 +21,7 @@
       <Sidebar.GroupLabel>App</Sidebar.GroupLabel>
       <Sidebar.GroupContent>
         <Sidebar.Menu>
-          {#each menus as menu (menu.title)}
+          {#each menu as m (m.title)}
             <Sidebar.MenuItem>
               <Sidebar.MenuButton
                 onclick={() => {
@@ -28,9 +29,9 @@
                 }}
               >
                 {#snippet child({ props })}
-                  <a href={menu.url} {...props}>
-                    <menu.icon />
-                    <span>{menu.title}</span>
+                  <a href={m.url} {...props}>
+                    <m.icon />
+                    <span>{m.title}</span>
                   </a>
                 {/snippet}
               </Sidebar.MenuButton>
