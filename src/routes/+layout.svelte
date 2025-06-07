@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { invalidate } from '$app/navigation';
+  import { afterNavigate, beforeNavigate, invalidate } from '$app/navigation';
   import { page } from '$app/state';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import { Toaster } from '$lib/components/ui/sonner/index.js';
+  import NProgress from 'nprogress';
+  import 'nprogress/nprogress.css';
   import { onMount } from 'svelte';
   import { toast } from 'svelte-sonner';
   import { getFlash } from 'sveltekit-flash-message';
@@ -13,6 +15,8 @@
   let { data, children } = $props();
   let { session, supabase, user } = $derived(data);
 
+  NProgress.configure({ showSpinner: false });
+
   const flash = getFlash(page);
 
   onMount(() => {
@@ -22,6 +26,14 @@
       }
     });
     return () => data.subscription.unsubscribe();
+  });
+
+  beforeNavigate(() => {
+    NProgress.start();
+  });
+
+  afterNavigate(() => {
+    NProgress.done();
   });
 
   $effect(() => {
