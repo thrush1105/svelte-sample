@@ -22,9 +22,21 @@
     </div>
   </div>
   <div class="space-y-2">
+    <Label>名前</Label>
+    <div class="text-muted-foreground flex items-center gap-2">
+      {user.user_metadata.name ?? '-'}
+    </div>
+  </div>
+  <div class="space-y-2">
     <Label>パスワード</Label>
     <a href="/update-password" class="text-muted-foreground hover:underline">
       パスワードを変更する
     </a>
+  </div>
+  <div class="space-y-2">
+    <Label>最終ログイン日時</Label>
+    <div class="text-muted-foreground flex items-center gap-2">
+      {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : '-'}
+    </div>
   </div>
 {/if}
