@@ -1,3 +1,9 @@
+import {
+  checkAccountLock,
+  loginFailed,
+  resetLoginFailures,
+  selectUserByEmail
+} from '$lib/server/login';
 import { getAppUrl } from '$lib/url';
 import { error } from '@sveltejs/kit';
 import { redirect } from 'sveltekit-flash-message/server';
@@ -21,6 +27,35 @@ export const actions: Actions = {
       return fail(400, { form });
     }
 
+    // ユーザーの確認
+    const { data: userWithEmail, error: errorOnSelectUser } = await selectUserByEmail(
+      form.data.email
+    );
+
+    if (errorOnSelectUser) {
+      console.error(errorOnSelectUser);
+      error(500, `エラーが発生しました: ${errorOnSelectUser.code}`);
+    }
+
+    if (!userWithEmail) {
+      return message(form, 'メールアドレスとパスワードが一致しません', { status: 400 });
+    }
+
+    // アカウントロックの確認
+    const { data: account, error: errorOnCheckAccountLock } = await checkAccountLock(
+      userWithEmail.id
+    );
+
+    if (errorOnCheckAccountLock) {
+      console.error(errorOnCheckAccountLock);
+      error(500, `エラーが発生しました: ${errorOnCheckAccountLock.code}`);
+    }
+
+    if (account?.isLocked) {
+      return message(form, 'アカウントがロックされています', { status: 400 });
+    }
+
+    // サインイン
     const {
       data: { user },
       error: errorOnSignIn
@@ -31,11 +66,31 @@ export const actions: Actions = {
 
     if (errorOnSignIn) {
       if (errorOnSignIn.code === 'invalid_credentials') {
+        // ログイン失敗
+        const { data: account, error: errorOnLoginFailed } = await loginFailed(userWithEmail.id);
+
+        if (errorOnLoginFailed) {
+          console.error(errorOnLoginFailed);
+          error(500, `エラーが発生しました: ${errorOnLoginFailed.code}`);
+        }
+
+        if (account?.isLocked) {
+          return message(form, 'アカウントがロックされました', { status: 400 });
+        }
+
         return message(form, 'メールアドレスとパスワードが一致しません', { status: 400 });
       } else {
         console.error(errorOnSignIn);
         error(500, `エラーが発生しました: ${errorOnSignIn.code}`);
       }
+    }
+
+    // ログイン失敗回数のリセット
+    const { error: errorOnResetLoginFailures } = await resetLoginFailures(userWithEmail.id);
+
+    if (errorOnResetLoginFailures) {
+      console.error(errorOnResetLoginFailures);
+      error(500, `エラーが発生しました: ${errorOnResetLoginFailures.code}`);
     }
 
     redirect('/profile', { type: 'success', message: 'ログインしました' }, cookies);
