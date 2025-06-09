@@ -1,0 +1,54 @@
+<script lang="ts">
+  import { page } from '$app/state';
+  import ErrorAlert from '$lib/components/error-alert.svelte';
+  import Button from '$lib/components/ui/button/button.svelte';
+  import * as Form from '$lib/components/ui/form/index.js';
+  import { LoaderCircle } from '@lucide/svelte';
+  import { toast } from 'svelte-sonner';
+  import { defaults, superForm } from 'sveltekit-superforms';
+  import { zod, zodClient } from 'sveltekit-superforms/adapters';
+  import { deleteVideoFormSchema } from './schema';
+
+  let {
+    id,
+    onUpdate,
+    onCancel
+  }: {
+    id: number;
+    onUpdate?: () => void;
+    onCancel?: () => void;
+  } = $props();
+
+  const form = superForm(defaults({ id }, zod(deleteVideoFormSchema)), {
+    validators: zodClient(deleteVideoFormSchema),
+    onUpdate({ form, result }) {
+      if (result.type === 'success') {
+        toast.success(form.message, { position: 'bottom-right', richColors: true });
+        onUpdate?.();
+      }
+    },
+    onError({ result }) {
+      toast.error(result.error.message, { position: 'bottom-right', richColors: true });
+    }
+  });
+
+  const { form: formData, enhance, submitting, delayed, message } = form;
+</script>
+
+<form method="POST" action="?/delete" use:enhance>
+  {#if page.status >= 400}
+    <ErrorAlert title="エラー" message={$message} />
+  {/if}
+
+  <input type="hidden" name="id" value={$formData.id} />
+
+  <div class="flex flex-col-reverse gap-4 sm:flex-row sm:justify-end">
+    <Button variant="secondary" onclick={onCancel}>キャンセル</Button>
+    <Form.Button variant="destructive" disabled={$submitting}>
+      削除
+      {#if $submitting}
+        <LoaderCircle class="animate-spin" />
+      {/if}
+    </Form.Button>
+  </div>
+</form>

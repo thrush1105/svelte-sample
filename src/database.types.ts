@@ -59,6 +59,62 @@ export type Database = {
         };
         Relationships: [];
       };
+      youtube_videos: {
+        Row: {
+          channel_id: string;
+          channel_title: string;
+          created_at: string;
+          description: string | null;
+          id: number;
+          published_at: string | null;
+          tags: Json | null;
+          thumbnail: string | null;
+          title: string;
+          updated_at: string;
+          user_id: string | null;
+          video_id: string;
+          view_count: number | null;
+        };
+        Insert: {
+          channel_id: string;
+          channel_title: string;
+          created_at?: string;
+          description?: string | null;
+          id?: number;
+          published_at?: string | null;
+          tags?: Json | null;
+          thumbnail?: string | null;
+          title: string;
+          updated_at?: string;
+          user_id?: string | null;
+          video_id: string;
+          view_count?: number | null;
+        };
+        Update: {
+          channel_id?: string;
+          channel_title?: string;
+          created_at?: string;
+          description?: string | null;
+          id?: number;
+          published_at?: string | null;
+          tags?: Json | null;
+          thumbnail?: string | null;
+          title?: string;
+          updated_at?: string;
+          user_id?: string | null;
+          video_id?: string;
+          view_count?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'youtube_videos_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
