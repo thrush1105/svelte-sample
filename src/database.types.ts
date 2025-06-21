@@ -41,6 +41,53 @@ export type Database = {
           }
         ];
       };
+      transactions: {
+        Row: {
+          amount: number | null;
+          category: string | null;
+          created_at: string;
+          date: string;
+          description: string | null;
+          id: number;
+          is_transfer: boolean;
+          service: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          amount?: number | null;
+          category?: string | null;
+          created_at?: string;
+          date: string;
+          description?: string | null;
+          id?: number;
+          is_transfer: boolean;
+          service: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          amount?: number | null;
+          category?: string | null;
+          created_at?: string;
+          date?: string;
+          description?: string | null;
+          id?: number;
+          is_transfer?: boolean;
+          service?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'transactions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       users: {
         Row: {
           created_at: string;
@@ -108,6 +155,13 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: 'youtube_videos_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       payslips: {
         Row: {
           area_allowance: number | null;
@@ -207,6 +261,12 @@ export type Database = {
           resident_tax: number;
           total_deductions: number;
           net_pay: number;
+        }[];
+      };
+      get_transaction_categories: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          value: string;
         }[];
       };
     };

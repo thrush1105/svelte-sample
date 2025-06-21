@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { cn } from '$lib/utils';
   import { Search, X } from '@lucide/svelte';
   import Input from './ui/input/input.svelte';
-  import { cn } from '$lib/utils';
 
   type Props = {
     class?: string;
