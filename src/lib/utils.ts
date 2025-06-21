@@ -19,3 +19,31 @@ export const parseStringToInt = (value: string | null | undefined) => {
   }
   return null;
 };
+
+export const camelToSnake = (str: string): string => {
+  return str.replace(/([A-Z])/g, '_$1').toLowerCase();
+};
+
+export const convertKeysToSnake = (obj: any): any => {
+  return Array.isArray(obj)
+    ? obj.map(convertKeysToSnake)
+    : obj !== null && typeof obj === 'object'
+      ? Object.fromEntries(
+          Object.entries(obj).map(([key, value]) => [camelToSnake(key), convertKeysToSnake(value)])
+        )
+      : obj;
+};
+
+export const snakeToCamel = (str: string): string => {
+  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+};
+
+export const convertKeysToCamel = (obj: any): any => {
+  return Array.isArray(obj)
+    ? obj.map(convertKeysToCamel)
+    : obj !== null && typeof obj === 'object'
+      ? Object.fromEntries(
+          Object.entries(obj).map(([key, value]) => [snakeToCamel(key), convertKeysToCamel(value)])
+        )
+      : obj;
+};
