@@ -41,6 +41,53 @@ export type Database = {
           }
         ];
       };
+      transactions: {
+        Row: {
+          amount: number | null;
+          category: string | null;
+          created_at: string;
+          date: string;
+          description: string | null;
+          id: number;
+          is_transfer: boolean;
+          service: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          amount?: number | null;
+          category?: string | null;
+          created_at?: string;
+          date: string;
+          description?: string | null;
+          id?: number;
+          is_transfer: boolean;
+          service: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          amount?: number | null;
+          category?: string | null;
+          created_at?: string;
+          date?: string;
+          description?: string | null;
+          id?: number;
+          is_transfer?: boolean;
+          service?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'transactions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       users: {
         Row: {
           created_at: string;
@@ -64,7 +111,12 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      get_transaction_categories: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          value: string;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;
