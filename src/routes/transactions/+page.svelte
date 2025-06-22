@@ -27,13 +27,13 @@
   </Button>
 </div>
 
-<StatisticsView data={data.statistics} />
-
 <MonthSelect
   bind:value={params.month}
   onValueChange={() => {
     updateUrlQuery({ month: params.month });
   }}
 />
+
+<StatisticsView data={data.statistics} />
 
 <TransactionsTable data={data.transactions} />

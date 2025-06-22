@@ -15,8 +15,8 @@
 <Dialog.Root bind:open>
   <Dialog.Content>
     <Dialog.Header>
-      <Dialog.Title>動画を削除しますか？</Dialog.Title>
-      <Dialog.Description>{video.title}</Dialog.Description>
+      <Dialog.Title>削除</Dialog.Title>
+      <Dialog.Description>動画を削除します。({video.title})</Dialog.Description>
     </Dialog.Header>
     <DeleteVideoForm
       id={video.id}

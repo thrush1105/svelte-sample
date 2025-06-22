@@ -23,7 +23,7 @@
   </Dialog.Trigger>
   <Dialog.Content interactOutsideBehavior="close">
     <Dialog.Header>
-      <Dialog.Title>動画を追加する</Dialog.Title>
+      <Dialog.Title>追加</Dialog.Title>
       <Dialog.Description>YouTubeのURLを入力してください。</Dialog.Description>
     </Dialog.Header>
     <AddVideoForm

@@ -58,7 +58,7 @@ export const actions: Actions = {
 
         return setError(form, 'currentPassword', '現在のパスワードが正しくありません');
       } else {
-        console.error(errorOnSignIn.stack);
+        console.error(errorOnSignIn);
         error(500, `エラーが発生しました: ${errorOnSignIn.code}`);
       }
     }
@@ -76,7 +76,7 @@ export const actions: Actions = {
     });
 
     if (errorOnUpdate) {
-      console.error(errorOnUpdate.stack);
+      console.error(errorOnUpdate);
       error(500, `エラーが発生しました: ${errorOnUpdate.code}`);
     }
 

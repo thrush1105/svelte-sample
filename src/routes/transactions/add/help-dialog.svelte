@@ -13,75 +13,75 @@
     <Dialog.Header>
       <Dialog.Title>CSV仕様</Dialog.Title>
       <Dialog.Description></Dialog.Description>
-      <div class="space-y-4">
-        <div>
-          <Label>ファイル形式</Label>
-          <p class="text-muted-foreground">CSV</p>
-        </div>
-        <div>
-          <Label>文字コード</Label>
-          <p class="text-muted-foreground">UTF-8</p>
-        </div>
-        <div>
-          <Label>ヘッダー行</Label>
-          <p class="text-muted-foreground">なし</p>
-        </div>
-        <div>
-          <Label>データ定義</Label>
-          <Table.Root>
-            <Table.Header>
-              <Table.Row>
-                <Table.Head>列</Table.Head>
-                <Table.Head>項目</Table.Head>
-                <Table.Head>データ型</Table.Head>
-                <Table.Head>例</Table.Head>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              <Table.Row>
-                <Table.Cell>1</Table.Cell>
-                <Table.Cell>サービス名</Table.Cell>
-                <Table.Cell>string</Table.Cell>
-                <Table.Cell>ABC銀行</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>2</Table.Cell>
-                <Table.Cell>取引日</Table.Cell>
-                <Table.Cell>date (yyyy-MM-dd)</Table.Cell>
-                <Table.Cell>2025-06-21</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>3</Table.Cell>
-                <Table.Cell>金額</Table.Cell>
-                <Table.Cell>integer</Table.Cell>
-                <Table.Cell>-123456</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>5</Table.Cell>
-                <Table.Cell>カテゴリー</Table.Cell>
-                <Table.Cell>string</Table.Cell>
-                <Table.Cell>日用品</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>5</Table.Cell>
-                <Table.Cell>取引内容</Table.Cell>
-                <Table.Cell>string</Table.Cell>
-                <Table.Cell>PC</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>6</Table.Cell>
-                <Table.Cell>振替</Table.Cell>
-                <Table.Cell>boolean (true/1/false/0)</Table.Cell>
-                <Table.Cell>false</Table.Cell>
-              </Table.Row>
-            </Table.Body>
-          </Table.Root>
-        </div>
-        <div>
-          <Label>サンプル</Label>
-          <p class="text-muted-foreground">ABC銀行,2025-06-21,-123456,日用品,PC,false</p>
-        </div>
-      </div>
     </Dialog.Header>
+    <div class="space-y-4">
+      <div class="space-y-2">
+        <Label>ファイル形式</Label>
+        <p class="text-muted-foreground">CSV</p>
+      </div>
+      <div class="space-y-2">
+        <Label>文字コード</Label>
+        <p class="text-muted-foreground">UTF-8</p>
+      </div>
+      <div class="space-y-2">
+        <Label>ヘッダー行</Label>
+        <p class="text-muted-foreground">なし</p>
+      </div>
+      <div class="space-y-2">
+        <Label>データ定義</Label>
+        <Table.Root>
+          <Table.Header>
+            <Table.Row>
+              <Table.Head>列</Table.Head>
+              <Table.Head>項目</Table.Head>
+              <Table.Head>データ型</Table.Head>
+              <Table.Head>例</Table.Head>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body class="[&_td]:whitespace-break-spaces">
+            <Table.Row>
+              <Table.Cell>1</Table.Cell>
+              <Table.Cell>サービス名</Table.Cell>
+              <Table.Cell>string</Table.Cell>
+              <Table.Cell>ABC銀行</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>2</Table.Cell>
+              <Table.Cell>取引日</Table.Cell>
+              <Table.Cell>date (yyyy-MM-dd)</Table.Cell>
+              <Table.Cell>2025-06-21</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>3</Table.Cell>
+              <Table.Cell>金額</Table.Cell>
+              <Table.Cell>integer</Table.Cell>
+              <Table.Cell>-123456</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>5</Table.Cell>
+              <Table.Cell>カテゴリー</Table.Cell>
+              <Table.Cell>string</Table.Cell>
+              <Table.Cell>日用品</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>5</Table.Cell>
+              <Table.Cell>取引内容</Table.Cell>
+              <Table.Cell>string</Table.Cell>
+              <Table.Cell>PC</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>6</Table.Cell>
+              <Table.Cell>振替</Table.Cell>
+              <Table.Cell>boolean (true/1/false/0)</Table.Cell>
+              <Table.Cell>false</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Root>
+      </div>
+      <div class="space-y-2">
+        <Label>サンプル</Label>
+        <p class="rounded-md border p-2 text-sm">ABC銀行,2025-06-21,-123456,日用品,PC,false</p>
+      </div>
+    </div>
   </Dialog.Content>
 </Dialog.Root>

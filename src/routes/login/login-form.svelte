@@ -22,12 +22,12 @@
   const { form: formData, enhance, submitting, delayed, message } = form;
 </script>
 
+{#if page.status >= 400}
+  <ErrorAlert title="エラー" message={$message} />
+{/if}
+
 <form method="POST" action="?/login" use:enhance>
   <div class="flex flex-col space-y-4">
-    {#if page.status >= 400}
-      <ErrorAlert title="エラー" message={$message} />
-    {/if}
-
     <Form.Field {form} name="email">
       <Form.Control>
         {#snippet children({ props })}

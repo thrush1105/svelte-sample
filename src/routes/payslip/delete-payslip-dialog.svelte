@@ -15,8 +15,8 @@
 <Dialog.Root bind:open>
   <Dialog.Content>
     <Dialog.Header>
-      <Dialog.Title>給与明細を削除しますか？</Dialog.Title>
-      <Dialog.Description></Dialog.Description>
+      <Dialog.Title>削除</Dialog.Title>
+      <Dialog.Description>給与明細を削除します。(ID: {payslip.id})</Dialog.Description>
     </Dialog.Header>
     <DeletePayslipForm
       id={payslip.id}

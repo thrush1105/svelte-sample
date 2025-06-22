@@ -93,7 +93,7 @@ export const actions: Actions = {
       .eq('id', form.data.id)
       .throwOnError();
 
-    if (count !== 1) {
+    if (!count) {
       error(400, '動画が存在しません');
     }
 

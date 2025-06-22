@@ -16,6 +16,7 @@
       <Table.Head>カテゴリー</Table.Head>
       <Table.Head>取引内容</Table.Head>
       <Table.Head>金額</Table.Head>
+      <Table.Head></Table.Head>
     </Table.Row>
   </Table.Header>
   <Table.Body>
